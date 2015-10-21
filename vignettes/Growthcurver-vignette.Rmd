@@ -1,0 +1,250 @@
+---
+title: "Growthcurver: Simple metrics to summarize growth curves"
+author: "Kathleen Sprouffske"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Growthcurver Vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## Introduction
+
+Growth curves are commonly used in a variety of microbial experiments, including experimental evolution. The data are typically obtained by repeatedly measuring the cell density, or some other representative measure like absorbance. Modern microbial growth curves can be conducted in a plate reader and may result in hundreds of absorbance measurements over the course of 24 hours.
+
+In the `Growthcurver` package, we fit growth curve data to a standard form of the logistic equation common in ecology and evolution whose parameters (the growth rate, the initial population size, and the carrying capacity) provide meaningful population-level information with straight-forward biological interpretation. The logistic equation is:
+
+$$
+\label{nt}
+N_t = \frac{K}{1 + \left( \frac{K-N_0}{N_0} \right) e^{-rt}} \
+$$
+
+Here, the population size at the beginning of the growth curve is given by $N_0$. The maximum possible population size in a particular environment, or the carrying capacity, is given by $K$. The intrinsic growth rate of the population, $r$, is the growth rate that would occur if there were no restrictions imposed on total population size. `Growthcurver` finds the best values of $K$, $r$, and $N_0$ for the growth curve data. 
+
+## Contents
+* Format of the input data
+* A simple first example
+* A sample pipeline for analyzing an entire plate
+* Working with the output metrics
+
+## Format of the input data
+We have provided some sample data in the format that makes using `Growthcurver` most straightforward. The sample data that we've provided has one column for the time (in hours), and one column for each "well" in a 96-well plate. Each row contains the OD600 reading for each well at a given time, and the rows are sorted by time. Note that we simulated these data.
+
+Preparing your data in this format will allow you to easily adapt the example simple code and the sample pipeline code (detailed in **A simple first example** and  **How to summarize growth curves for a plate**) to your data.
+
+Below, we show the first few rows and columns of the sample data.
+
+```{r, echo = FALSE, eval = TRUE}
+# First, load the package and the dataset. 
+library(growthcurver)
+
+# Load the sample growth curve data 
+# The first column is the time in hours, and there is one column 
+# for each well in a 96-well plate.
+d <- growthdata
+knitr::kable(d[1:10, 1:8])
+```
+
+In this example, the time column is reported in units of hours. This means that all metrics involving time for these data are reported by `growthcurver` in hours (e.g., $r$ is in time$^{-1}$). 
+
+The names of the columns for `Growthcurver` are irrelevant. However, if you plan to adapt the pipeline code in **How to summarize growth curves for a plate**, then the column containing the time must be named `time`, and the remaining columns must have a unique name.
+
+
+## A simple first example
+In this example, we will use `Growthcurver` to summarize a single growth curve. 
+
+```{r, eval = TRUE}
+# First, load the package and the dataset. 
+library(growthcurver)
+
+# Load the sample growth curve data 
+# The first column is the time in hours, and there is one column 
+# for each well in a 96-well plate.
+d <- growthdata
+
+```
+
+Let's summarize the growth curve data in well A1 using `growthcurver `. We'll first need to do a background correction to remove the absorbance signal due to media. Then we can run `growthcurver` and look at the results.
+```{r, eval = TRUE}
+# First, we'll do a background correction by subtracting the minimum
+# value from the well during the growth curve from all the timepoints.
+min_value <- min(d$A1)
+d$A1 <- d$A1 - min_value
+
+# Now, we'll use growthcurver to summarize the growth curve. 
+# This returns an object of type "gcfit" that holds information about
+# the best parameters, the model fit, and additional metrics summarizing
+# the growth curve.
+gc_fit <- SummarizeGrowth(d$time, d$A1)
+
+# It is easy to get the most useful metrics
+gc_fit
+
+# And it is easy to plot the raw data and the best fit logistic curve
+plot(gc_fit)
+```
+
+## Working with the output metrics
+
+The object returned from `growthcurver`'s `SummarizeGrowth` contains the metrics, and you can view them easily (as you did above), or you can manipulate them programmatically (as we will do now). 
+
+```{R, eval = FALSE}
+# The gcfit object returned from SummarizeGrowth also contains more metrics 
+# summarizing the growth curve data.
+gc_fit$vals
+
+# look at the structure of the gc_fit object
+str(gc_fit)
+```
+
+You'll see that there are three main parts of a `gcfit` object: the `vals`, the   `model`, and the `data`.  `vals` contains the summarized metrics for your growth curver, `model` contains the details of the model fit (for advanced users), and `data` contains the input data to `SummarizeGrowth`.  For most purposes, `vals` is the most useful. Let's see what else we can access in the `vals`.
+
+```{R, eval = TRUE} 
+# to see all the available metrics 
+str(gc_fit$vals)
+
+# to access a single metric (for example the residual sum of squares
+#                            from the fit of the model to the data)
+gc_fit$vals$sigma
+
+```
+
+The most useful values are `k`, `n0`, and `r`, which are the values of the parameters for the logistic equation that best fit the data. The fitting algorithm provides a measure of uncertainty for each. `Sigma` is also a measure of the goodnesss of fit of the parameters of the logistic equation for the data; it is the residual sum of squares from the nonlinear regression model. Smaller values are better than larger values. `t_mid` is the time at which the population density reaches $\frac{1}{2}K$, `t_gen` is the fastest possible generation time (sometimes called doubling time), `auc` is the area under the curve which is obtained by taking the integral of the logistic equation, and the `quant_auc` is the quantitative area under the curve which is obtained by summing up the area under of the experimental curve from the measurements in the input data.
+
+## How to summarize growth curves for a plate
+
+We often perform growth curves in a plate reader, and collect data for 96 wells at the same time. Here is some sample R code that uses `growthcurver` to summarize the growth curve data for a whole plate. To adapt this to your data, just ensure that your data are in the same format as the example data (discussed in more detail in the **Format of the input data** section). Most importantly, this code assumes that the time information is stored in a column named `time`.
+
+Here, we will first create a data frame in which to store the output data. We will then loop through the columns in the experimental growth curve data, call `SummarizeGrowth` for each, and store the metrics for each column in the output data frame.
+
+```{r, message = FALSE, fig.width = 7}
+# As in the simple example, load the package and the data. 
+# Also load the dplyr and ggplot2 packages.
+library(growthcurver)
+d <- growthdata
+
+# Let's create our output data frame to store the results in. 
+# We'll create it so that it is the right size (it's faster this way!), 
+# but leave it empty.
+num_analyses <- length(names(d)) - 1
+
+d_gc <- data.frame(sample = character(num_analyses),
+                   k = numeric(num_analyses),
+                   n0  = numeric(num_analyses),
+                   r = numeric(num_analyses),
+                   t_mid = numeric(num_analyses),
+                   t_gen = numeric(num_analyses),
+                   auc = numeric(num_analyses),
+                   quant_auc = numeric(num_analyses),
+                   sigma = numeric(num_analyses),
+                   stringsAsFactors = FALSE)
+
+# Let's truncate or trim our data to observations occuring in the first 20 hours
+trim_at_time <- 20
+
+# Now, loop through all of the columns in the data frame. For each column,
+# run growthcurver, save the most useful metrics in the output data frame,
+# and make a plot of all the growth curve data and their best fits..
+
+n <- 1    # keeps track of the current row in the output data frame
+
+# create a plot for each of the wells in the 96-well plate and save it in this pdf.
+# uncomment the next line to save the plots from your 96-well plate to a file
+# pdf("growthcurver.pdf", height = 8.5, width = 11)
+par(mfcol = c(8,12))
+par(mar = c(0.25,0.25,0.25,0.25))
+y_lim_max <- max(d[,setdiff(names(d), "time")]) - min(d[,setdiff(names(d), "time")])
+
+for (col_name in names(d)) {
+  
+  # Don't process the column called "time".
+  # It contains time and not OD600 data.
+  if (col_name != "time") {
+
+    # Create a temporary data frame that contains just the time and current col
+    d_loop <- d[, c("time", col_name)]
+    
+    # Do the background correction and then call growthcurver.
+    # We are trimming the data to 20 hours for the analysis.
+    min_value <- min(d_loop[, col_name])
+    d_loop[, col_name] <- d_loop[, col_name] - min_value
+    gc_fit <- SummarizeGrowth(data_t = d_loop[, "time"], 
+                              data_n = d_loop[, col_name],
+                              t_trim = trim_at_time)
+    
+    # Now, add the metrics from this column to the next row in the 
+    # output data frame, and increment the row counter (n)
+    d_gc$sample[n] <- col_name
+    d_gc[n, 2:9] <- c(gc_fit$vals$k,
+                      gc_fit$vals$n0,
+                      gc_fit$vals$r,
+                      gc_fit$vals$t_mid,
+                      gc_fit$vals$t_gen,
+                      gc_fit$vals$auc,
+                      gc_fit$vals$quant_auc,
+                      gc_fit$vals$sigma)
+    n <- n + 1
+    
+    # Finally, plot the raw data and the fitted curve
+    # Here, I'll just print some of the data points to keep the file size smaller
+    n_obs <- length(gc_fit$data$t)
+    idx_to_plot <- 1:20 / 20 * n_obs
+    plot(gc_fit$data$t[idx_to_plot], gc_fit$data$N[idx_to_plot], 
+          pch = 20, 
+          xlim = c(0, trim_at_time), 
+          ylim = c(0, y_lim_max),
+          cex = 0.6, xaxt = "n", yaxt = "n"
+          )
+     text(x = trim_at_time / 2, y = y_lim_max, labels = col_name, pos = 1)
+     lines(gc_fit$data$t, predict(gc_fit$model), col = "red")
+  }
+}
+# uncomment the next line to save the plots from your 96-well plate to a file
+# dev.off()
+```
+
+After running the above code, the summary metrics are available for each column.
+```{R, eval = FALSE}
+d_gc[1:4, ]
+```
+```{R, eval = TRUE, message = FALSE, echo = FALSE}
+library(dplyr)
+d_gc[1:4, ] %>% 
+    mutate(k = round(k, digits = 5),
+         n0 = round(n0, digits = 5), 
+         r = round(r, digits = 5),
+         t_mid = round(t_mid, digits = 5),
+         t_gen = round(t_gen, digits = 5),
+         auc = round(auc, digits = 5),
+         quant_auc = round(quant_auc, digits = 5), 
+         sigma = round(sigma, digits = 5))
+  
+```
+
+Sometimes `growthcurver` doesn't find the best fit for your data. To see if this is the case, it is worth plotting all the curves and checking them manually, or looking for outliers with larger `sigma` values. I use the package `dplyr` for my data wrangling and exploration.
+
+```{R, eval = FALSE, message = FALSE}
+library(dplyr)
+d_gc <- as_data_frame(d_gc)
+d_gc %>% top_n(5, sigma) %>% arrange(desc(sigma))
+hist(d_gc$sigma, main = "", xlab = 'sigma')
+```
+```{R, eval = TRUE, echo = FALSE, message = FALSE}
+library(dplyr)
+d_gc <- as_data_frame(d_gc)
+d_gc %>%  
+  mutate(k = round(k, digits = 5),
+         n0 = round(n0, digits = 5), 
+         r = round(r, digits = 5),
+         t_mid = round(t_mid, digits = 5),
+         t_gen = round(t_gen, digits = 5),
+         auc = round(auc, digits = 5),
+         quant_auc = round(quant_auc, digits = 5), 
+         sigma = round(sigma, digits = 5)) %>%
+  top_n(5, sigma) %>% arrange(desc(sigma))
+hist(d_gc$sigma,  main = "", xlab = 'sigma')
+```
+
+We simulated this dataset, so it is not very noisy. Therefore, it is not surprising that there aren't any extreme `sigma` outliers in this case.
+
