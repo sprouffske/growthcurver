@@ -9,7 +9,7 @@ You can install the latest released version from CRAN with
 
 You can install the latest development version from github with
   ```R
-  # install devtools first if you don't already the package
+  # install devtools first if you don't already have the package
   install.packages("devtools")
 
   # then install growthcurver
