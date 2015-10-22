@@ -28,11 +28,11 @@ The easiest way to get started with growthcurver is to work through the examples
 
 This code loads the `growthcurver` package and some sample data. Then, it calls `SummarizeGrowth` to do the analysis. 
 ```R
-library(growthcurver)
-d <- growthdata
-gc_fit <- SummarizeGrowth(d$time, d$A1)                                        a
-plot(gc_fit)
-gc_fit
+library(growthcurver)                    # load the package
+d <- growthdata                          # load some sample, simulated data
+gc_fit <- SummarizeGrowth(d$time, d$A1)  # do the analysis
+plot(gc_fit)                             # plot your data and the best fit
+gc_fit                                   # view some returned metrics
 ```
 
  
