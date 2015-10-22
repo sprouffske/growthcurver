@@ -23,7 +23,7 @@ NAtT <- function(k, n0, r, t) {
 # @param t       The time at which you want to know the growth rate
 # @return        The number of cells, or N, at time t
 SlopeAtT <- function(k, n0, r, t) {
-  n <- growthcurver:::NAtT(k, n0, r, t)
+  n <- NAtT(k, n0, r, t)
   return(r * n * (k - n) / k)
 }
 
@@ -49,7 +49,7 @@ MaxDt <- function(r) {
 # @param t       The time at which you want to know the doubling time
 # @return        The doubling time at time t
 DtAtT <- function(k, n0, r, t) {
-  n_t <- growthcurver:::NAtT(k, n0, r, t)
+  n_t <- NAtT(k, n0, r, t)
   n_halft <- 0.5 * n_t
   return(( 1 / r) * log((n_t * (k - n_halft)) / ((k - n_t) * n_halft)))
 }
@@ -113,14 +113,14 @@ QuantitativeAreaUnderCurve <- function(data_t, data_n, t_trim = 0) {
   if (!is.vector(data_t) | !is.vector(data_n)) {
     stop("Error: The input data (data_t and data_n) must be vectors.")
   }
-  if (!is.numeric(data_t) |!is.numeric(data_n)) {
+  if (!is.numeric(data_t) | !is.numeric(data_n)) {
     stop("Error: The input data (data_t and data_n) must be numeric.")
   }
   if (t_trim > 0) {
     idx_to_keep <- data_t <= t_trim                # keep the early measurements
   }
   else {
-    idx_to_keep < rep(TRUE, length(d$time))       # keep all measurements
+    idx_to_keep < rep(TRUE, length(data_t))       # keep all measurements
   }
 
   quant_auc <- caTools::trapz(data_t[idx_to_keep], data_n[idx_to_keep])

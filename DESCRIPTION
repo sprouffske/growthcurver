@@ -1,23 +1,26 @@
 Package: growthcurver
 Type: Package
 Title: Fitness from Microbial Growth Curve Data
-Version: 0.0.0.9000
-Date: 2015-09-11
+Version: 0.1.0
+Date: 2015.10.21
 Authors@R: person("Kathleen", "sprouffske", email = "sprouffske@gmail.com", role = c("aut", "cre"))
-Description: This is a simple package that fits the logistic equation to 
-    microbial growth curve data (e.g., repeated absorbance measurements 
-    taken from a plate reader over time). From this fit, a variety of 
-    "fitness" proxies are provided, including the maximum growth rate, 
-    the doubling time, the carrying capacity, the area under the logistic 
+Description: This is a simple package that fits the logistic equation to
+    microbial growth curve data (e.g., repeated absorbance measurements
+    taken from a plate reader over time). From this fit, a variety of
+    "fitness" proxies are provided, including the maximum growth rate,
+    the doubling time, the carrying capacity, the area under the logistic
     curve, and the time to the inflection point.
 LazyData: TRUE
-Imports: 
+Depends: R (>= 2.10)
+Imports:
     caTools (>= 1.17.1),
     minpack.lm (>= 1.1),
     stats (>= 3.2.2)
 URL: http://kathleensprouffske.com/growthcurver
 BugReports: https://github.com/sprouffske/growthcurver/issues
 License: GPL (>= 2)
-Suggests: testthat,
-    knitr
+Suggests:
+    testthat,
+    knitr,
+    dplyr
 VignetteBuilder: knitr

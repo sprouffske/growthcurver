@@ -93,11 +93,11 @@ SummarizeGrowth <- function(data_t, data_n, t_trim = 0) {
   r_p <- p[12]
 
   # get the inflection point
-  t_inflection <- growthcurver:::TAtInflection(k, n0, r)
+  t_inflection <- TAtInflection(k, n0, r)
 
-  DT <- growthcurver:::MaxDt(r)
-  n_at_t_inflection <- growthcurver:::NAtT(k, n0, r, t_inflection)
-  auc <- growthcurver:::AreaUnderCurve(k, n0, r, 0, t_max)$value
+  DT <- MaxDt(r)
+  n_at_t_inflection <- NAtT(k, n0, r, t_inflection)
+  auc <- AreaUnderCurve(k, n0, r, 0, t_max)$value
   sigma <- summary(log_mod)$sigma
   df <- summary(log_mod)$df[2]
 
