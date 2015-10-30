@@ -92,15 +92,15 @@ TAtInflection <- function(k, n0, r) {
 # @return        The area under the curve for logistic equation with the
 #                given parameters, for the specificed time range
 AreaUnderCurve <- function(k, n0, r, t_min = 0, t_max) {
-  auc <- integrate(function(x) NAtT(k, n0, r, x), t_min, t_max)
-  return(auc)
+  auc_l <- integrate(function(x) NAtT(k, n0, r, x), t_min, t_max)
+  return(auc_l)
 }
 
 
 
-# Area Under the Experimental Curve
+# Area Under the Empirical Curve
 #
-# This function returns the experimental "area under the curve". It uses the
+# This function returns the empirical "area under the curve". It uses the input
 # data to do so (rather than using the logistic fit).
 # @param data_t    A vector of timepoints (data_n must also
 #                  be provided and be the same length).
@@ -108,7 +108,7 @@ AreaUnderCurve <- function(k, n0, r, t_min = 0, t_max) {
 # @param t_trim    Add up the area under the curve from the beginning to
 #                  t_trim. Defaults to 0, which means don't trim.
 # @return          The area under the curve
-QuantitativeAreaUnderCurve <- function(data_t, data_n, t_trim = 0) {
+EmpiricalAreaUnderCurve <- function(data_t, data_n, t_trim = 0) {
   # make sure that both inputs are vectors
   if (!is.vector(data_t) | !is.vector(data_n)) {
     stop("Error: The input data (data_t and data_n) must be vectors.")
@@ -123,6 +123,6 @@ QuantitativeAreaUnderCurve <- function(data_t, data_n, t_trim = 0) {
     idx_to_keep < rep(TRUE, length(data_t))       # keep all measurements
   }
 
-  quant_auc <- caTools::trapz(data_t[idx_to_keep], data_n[idx_to_keep])
-  return(quant_auc)
+  auc_e <- caTools::trapz(data_t[idx_to_keep], data_n[idx_to_keep])
+  return(auc_e)
 }

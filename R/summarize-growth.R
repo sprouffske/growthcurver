@@ -44,8 +44,8 @@
 #' gc$vals$t_gen       # doubling time, or generation time, is also common
 #' gc$vals$k
 #' gc$vals$n0
-#' gc$vals$auc
-#' gc$vals$quant_auc
+#' gc$vals$auc_l
+#' gc$vals$auc_e
 #' gc$vals$t_mid
 #'
 #' # Compare the data with the fit visually by plotting it
@@ -78,7 +78,7 @@ SummarizeGrowth <- function(data_t, data_n, t_trim = 0) {
   }
 
 
-  q_AUC <- QuantitativeAreaUnderCurve(data_t, data_n, t_max)
+  auc_e <- EmpiricalAreaUnderCurve(data_t, data_n, t_max)
   log_mod <- FitLogistic(data_t, data_n)
 
   p <- summary(log_mod)$coefficients
@@ -96,17 +96,16 @@ SummarizeGrowth <- function(data_t, data_n, t_trim = 0) {
   t_inflection <- TAtInflection(k, n0, r)
 
   DT <- MaxDt(r)
-  n_at_t_inflection <- NAtT(k, n0, r, t_inflection)
-  auc <- AreaUnderCurve(k, n0, r, 0, t_max)$value
+  auc_l <- AreaUnderCurve(k, n0, r, 0, t_max)$value
   sigma <- summary(log_mod)$sigma
   df <- summary(log_mod)$df[2]
 
   vals <- c(k, k_se, k_p, n0, n0_se, n0_p,
             r, r_se, r_p, sigma, df,
-            t_inflection, DT, n_at_t_inflection, auc, q_AUC)
+            t_inflection, DT, auc_l, auc_e)
   val_names <- c("k", "k_se", "k_p", "n0", "n0_se", "n0_p",
                  "r", "r_se", "r_p", "sigma", "df",
-                 "t_mid", "t_gen", "N_at_t_mid", "auc", "quant_auc")
+                 "t_mid", "t_gen", "auc_l", "auc_e")
   vals <- setNames(as.list(vals), val_names)
   class(vals) <- "gcvals"
 

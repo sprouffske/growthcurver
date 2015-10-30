@@ -59,13 +59,13 @@ print.gcfit <- function(x, ...) {
   # Show other interesting metrics
   cat("Other useful metrics:\n")
   cat("  ")
-  cat("DT", "1 / DT", "auc", "quant_auc", sep = "\t")
+  cat("DT", "1 / DT", "auc_l", "auc_e", sep = "\t")
   cat("\n")
   cat("  ")
   cat(c(round(x$vals$t_gen, 2),
         format(1 / x$vals$t_gen, scientific = TRUE, digits = 2),
-        round(x$vals$auc, 2),
-        round(x$vals$quant_auc, 2)), sep = "\t")
+        round(x$vals$auc_l, 2),
+        round(x$vals$auc_e, 2)), sep = "\t")
   cat("\n")
 
 }
@@ -98,24 +98,22 @@ plot.gcfit <- function(x, ...) {
 #' @param sigma     Residual standard error from non-linear least squares fit
 #'                  of the model to the data
 #' @param df        Degrees of freedom
-#' @param t.mid     The time at the inflection point of the logistic curve
+#' @param t_mid     The time at the inflection point of the logistic curve
 #'                  (occurs at half of the carrying capacity)
 #' @param dt        The maximum doubling time, obtained by evaluating the
 #'                  the unrestrained growth of the population with growth rate r
-#' @param N.at.t.mid The size of the population (or its absorbance) at the
-#'                  inflection point. This should be equal to 0.5 * k
-#' @param auc       The area under the curve of the fitted logistic equation
+#' @param auc_l     The area under the curve of the fitted logistic equation
 #'                  from time 0 to time t
-#' @param auc.quant The area under the curve of the measurements.
+#' @param auc_e     The area under the curve of the measurements.
 #' @return          An object of class gcvals.
 #' @export
 gcvals <- function(k, k_se, k_p, n0, n0_se, n0_p, r, r_se, r_p, sigma, df,
-                   t.mid, dt, N.at.t.mid, auc, auc.quant) {
+                   t.mid, dt, auc_l, auc_e) {
   val.names <- c("k", "k_se", "k_p", "n0", "n0_se", "n0_p",
                  "r", "r_se", "r_p", "sigma", "df",
-                 "t.mid", "dt", "N.at.t.mid", "auc", "quant.auc")
+                 "t_mid", "dt", "auc_l", "auc_e")
   vals <- setNames(as.list(k, k_se, k_p, n0, n0_se, n0_p, r, r_se, r_p,
-                           sigma, df, t.mid, dt, N.at.t.mid, auc, auc.quant),
+                           sigma, df, t_mid, dt,  auc_l, auc_e),
                    val.names)
 }
 
