@@ -7,7 +7,7 @@ Authors@R: person("Kathleen", "sprouffske", email = "sprouffske@gmail.com", role
 Description: This is a simple package that fits the logistic equation to
     microbial growth curve data (e.g., repeated absorbance measurements
     taken from a plate reader over time). From this fit, a variety of
-    "fitness" proxies are provided, including the maximum growth rate,
+    metrics are provided, including the maximum growth rate,
     the doubling time, the carrying capacity, the area under the logistic
     curve, and the time to the inflection point.
 LazyData: TRUE
