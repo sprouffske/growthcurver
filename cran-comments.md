@@ -6,7 +6,7 @@
 ## R CMD check results
 There were no ERRORs, WARNINGs, or NOTEs.
 
-However, this the first submission of this package to CRAN!
+However, this is the first submission of this package to CRAN!
 
 
 ## Downstream dependencies
