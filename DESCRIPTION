@@ -1,6 +1,6 @@
 Package: growthcurver
 Type: Package
-Title: Fitness from Microbial Growth Curve Data
+Title: Simple Metrics to Summarize Growth Curves
 Version: 0.1.0
 Date: 2015.10.21
 Authors@R: person("Kathleen", "sprouffske", email = "sprouffske@gmail.com", role = c("aut", "cre"))
@@ -16,7 +16,7 @@ Imports:
     caTools (>= 1.17.1),
     minpack.lm (>= 1.1),
     stats (>= 3.2.2)
-URL: http://kathleensprouffske.com/growthcurver
+URL: https://github.com/sprouffske/growthcurver
 BugReports: https://github.com/sprouffske/growthcurver/issues
 License: GPL (>= 2)
 Suggests:
