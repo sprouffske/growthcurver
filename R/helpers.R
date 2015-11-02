@@ -108,7 +108,7 @@ plot.gcfit <- function(x, ...) {
 #' @return          An object of class gcvals.
 #' @export
 gcvals <- function(k, k_se, k_p, n0, n0_se, n0_p, r, r_se, r_p, sigma, df,
-                   t.mid, dt, auc_l, auc_e) {
+                   t_mid, dt, auc_l, auc_e) {
   val.names <- c("k", "k_se", "k_p", "n0", "n0_se", "n0_p",
                  "r", "r_se", "r_p", "sigma", "df",
                  "t_mid", "dt", "auc_l", "auc_e")

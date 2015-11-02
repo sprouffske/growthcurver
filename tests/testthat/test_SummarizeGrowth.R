@@ -1,7 +1,7 @@
 library(growthcurver)
 context("summarize growth")
 
-test_that("SummarizeGrowth returns expected values", {         
+test_that("SummarizeGrowth returns expected values", {
   # test that what is returned from the actual equation equals the
   # simulated data
   k_in <- 0.5
@@ -15,7 +15,7 @@ test_that("SummarizeGrowth returns expected values", {
   expect_equal(n0_in, gc$vals$n0)
   expect_equal(r_in, gc$vals$r)
   expect_equal(round(9.02, 2), round(gc$val$t_mid, 2))
-  expect_equal(7.49, round(gc$val$auc, 2))
+  expect_equal(7.49, round(gc$val$auc_l, 2))
   expect_equal(class(gc), "gcfit")
   expect_equal(class(gc$model), "nls")
   expect_equal(gc$data$t[1], 0)

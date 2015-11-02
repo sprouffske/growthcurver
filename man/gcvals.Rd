@@ -4,7 +4,7 @@
 \alias{gcvals}
 \title{Creates an object of type gcvals.}
 \usage{
-gcvals(k, k_se, k_p, n0, n0_se, n0_p, r, r_se, r_p, sigma, df, t.mid, dt, auc_l,
+gcvals(k, k_se, k_p, n0, n0_se, n0_p, r, r_se, r_p, sigma, df, t_mid, dt, auc_l,
   auc_e)
 }
 \arguments{
@@ -31,6 +31,9 @@ of the model to the data}
 
 \item{df}{Degrees of freedom}
 
+\item{t_mid}{The time at the inflection point of the logistic curve
+(occurs at half of the carrying capacity)}
+
 \item{dt}{The maximum doubling time, obtained by evaluating the
 the unrestrained growth of the population with growth rate r}
 
@@ -38,9 +41,6 @@ the unrestrained growth of the population with growth rate r}
 from time 0 to time t}
 
 \item{auc_e}{The area under the curve of the measurements.}
-
-\item{t_mid}{The time at the inflection point of the logistic curve
-(occurs at half of the carrying capacity)}
 }
 \value{
 An object of class gcvals.
