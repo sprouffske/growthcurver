@@ -11,7 +11,8 @@ Description: This is a simple package that fits the logistic equation to
     the doubling time, the carrying capacity, the area under the logistic
     curve, and the time to the inflection point.
 LazyData: TRUE
-Depends: R (>= 2.10)
+Depends:
+    R (>= 2.10)
 Imports:
     caTools (>= 1.17.1),
     minpack.lm (>= 1.1),
@@ -24,3 +25,4 @@ Suggests:
     knitr,
     dplyr
 VignetteBuilder: knitr
+RoxygenNote: 5.0.0
