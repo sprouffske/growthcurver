@@ -39,17 +39,62 @@ Below, we show the first few rows and columns of the sample data.
 # First, load the package and the dataset. 
 library(growthcurver)
 
-# Load the sample growth curve data 
+# Load the sample growth curve data provided with the package 
 # The first column is the time in hours, and there is one column 
 # for each well in a 96-well plate.
 d <- growthdata
 knitr::kable(d[1:10, 1:8])
 ```
 
-In this example, time is reported in units of hours. This means that all metrics involving time for these data are reported by `Growthcurver` in hours (e.g., $r$ is in hours$^{-1}$). 
+Your data will probably come from the plate reader as an Excel spreadsheet. Convert the data in your spreadsheet so that the wells and time are the column headers and the data are the rows as shown above (Excel's Paste Special | Transpose checkbox is useful for this). Save your growth curve data file as a tab-separated `txt` file, and then read that file into R.  
+
+```{r, eval = FALSE}
+# Replace the next line with the location and name of your input data file.
+file_name <- "the/path/to/my/data/myfilename.txt"
+d <- read.table(file_name, header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+```
 
 With the exception of the column containing the time data, the names of the columns for `Growthcurver` are unimportant. However, if you plan to adapt the pipeline code in **How to summarize growth curves for a plate**, then the column containing the time must be named `time`, and the remaining columns must have a unique name that will be eventually be identified as the sample name. 
 
+If you don't have a column named `time`, you can create easily create it.
+```{r, eval = FALSE}
+# Here, I assume that your time data are stored in a column called "hours" and 
+# you don't have a column named "time". You can copy the data from the "hours"
+# column to the "time" column as follows.
+d$time <- d$hours
+```
+
+In this example, time is reported in units of hours. This means that all metrics involving time for these data are reported by `Growthcurver` in hours (e.g., $r$ is in hours$^{-1}$). If your data are in a different time unit than you would like, the following code may help you adjust the data in your time column.
+
+```{r, eval = FALSE}
+# Convert the "time" column from hours to minutes
+d$time <- d$time * 60
+
+# Convert the "time" column from minutes to seconds
+d$time <- d$time * 60
+
+# Convert the "time" column from seconds to hours
+d$time <- d$time * 60 * 60
+```
+
+
+
+You will also need to do a background correction to remove the absorbance signal from the media. There are several approaches for doing the background correction, and I've implemented the simplest in the sample code in the **A simple first example** and **How to summarize growth curves for a plate** sections. The simple method finds the minimum value from each well, and subtracts it from all timepoints (for that well only). This method works if you do not expect your background readings to change over time. Sometimes the background readings may change over time, for example when the media precipitates over time. In this case, you can subtract the average background reading obtained from a set of blank wells at the same timepoint that the measurements were made.
+
+```{r, eval = FALSE}
+# How to do a background correction by averaging several "blank" wells 
+# (for the sake of this example, let's assume that wells B2, D8, and G11 
+# are blanks even though they actually hold growth curve data).  
+# If you want to use this method for background correction, 
+# replace my well names with yours.
+
+# First, get the "blank" values over time by averaging the "blank" columns at
+# each timepoint at which measurements were made.
+d$blank <- apply(d[, c("B2", "D8", "G11")], 1, mean)
+# Next, subtract the blank value from the measurements for a column.
+d$A1 <- d$A1 - d$blank
+```
+If you want to use this advanced background correction approach, replace the background correction code I provide in the examples in the  **A simple first example** and **How to summarize growth curves for a plate** sections with these two lines. Be sure to replace "B2", "D8", and "G11" with the column names of the blanks on your plates. 
 
 ## A simple first example
 In this example, we will use `Growthcurver` to summarize a single growth curve. 
@@ -58,21 +103,25 @@ In this example, we will use `Growthcurver` to summarize a single growth curve.
 # First, load the package and the dataset. 
 library(growthcurver)
 
-# Load the sample growth curve data 
+# Load the sample growth curve data provided in the Growthcurver package.
 # The first column is the time in hours, and there is one column 
 # for each well in a 96-well plate.
 d <- growthdata
 
 ```
 
-Let's summarize the growth curve data in well A1 using `Growthcurver`. We'll first need to do a background correction to remove the absorbance signal due to media. Then we can run `Growthcurver` and look at the results.
+Let's summarize the growth curve data in well A1 using `Growthcurver`. Then we can run `Growthcurver` and look at the results.
+
 ```{r, eval = TRUE, fig.height = 3, fig.width = 3}
 # First, we'll do a background correction by subtracting the minimum
 # value from the well during the growth curve from all the timepoints.
+# You could replace the following two lines with your favorite background 
+# correction method (one is given in the "Format of the input data" section).
 min_value <- min(d$A1)
 d$A1 <- d$A1 - min_value
 
-# Now, we'll use Growthcurver to summarize the growth curve data. 
+# Now, we'll use Growthcurver to summarize the growth curve data using the 
+# simple background correction method (minimum value correction). 
 # This returns an object of type "gcfit" that holds information about
 # the best parameters, the model fit, and additional metrics summarizing
 # the growth curve.
@@ -138,8 +187,12 @@ d_gc <- data.frame(sample = character(num_analyses),
                    sigma = numeric(num_analyses),
                    stringsAsFactors = FALSE)
 
-# Truncate or trim the input data to observations occuring in the first 20 hours
-trim_at_time <- 20
+# Truncate or trim the input data to observations occuring in the first 20 hours.
+# Remember that the times in these sample data are reported in hours. To use  
+# minutes (or to trim at a different time), change the next line of code. 
+# For example, if you still would like to trim at 20 hours, but your time data 
+# are reported in minutes use: trim_at_time <- 20 * 60
+trim_at_time <- 20   
 
 # Now, loop through all of the columns in the data frame. For each column,
 # run Growthcurver, save the most useful metrics in the output data frame,
@@ -162,9 +215,13 @@ for (col_name in names(d)) {
     # Create a temporary data frame that contains just the time and current col
     d_loop <- d[, c("time", col_name)]
     
-    # Do the background correction and then call Growthcurver
+    # Do the background correction.
+    # You could replace the following two lines with your favorite background 
+    # correction method (one is given in the "Format of the input data" section).
     min_value <- min(d_loop[, col_name])
     d_loop[, col_name] <- d_loop[, col_name] - min_value
+
+    # Now, call Growthcurver to calculate the metrics using SummarizeGrowth
     gc_fit <- SummarizeGrowth(data_t = d_loop[, "time"], 
                               data_n = d_loop[, col_name],
                               t_trim = trim_at_time)
@@ -203,6 +260,10 @@ After running the above code, the summary metrics are available for each well (e
 
 ```{R, eval = FALSE}
 # Look at the first few rows (samples) of data in the output data frame. 
+# (I'm only showing the first 4 rows of results, but you may want to see more. 
+#  You can either look at everything using the command "d_gc", or adjust the
+#  number of rows displayed by changing the 4 to something else, 
+#  e.g., "d_gc[1:15,]").
 d_gc[1:4, ]
 ```
 ```{R, eval = TRUE, message = FALSE, echo = FALSE}
