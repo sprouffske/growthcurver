@@ -110,7 +110,7 @@ d <- growthdata
 
 ```
 
-Let's summarize the growth curve data in well A1 using `Growthcurver`. Then we can run `Growthcurver` and look at the results.
+Let's summarize the growth curve data in well A1 using `Growthcurver`. We'll first need to do a background correction to remove the absorbance signal due to media. Then we can run `Growthcurver` and look at the results.
 
 ```{r, eval = TRUE, fig.height = 3, fig.width = 3}
 # First, we'll do a background correction by subtracting the minimum
