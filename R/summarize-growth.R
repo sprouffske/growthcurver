@@ -3,14 +3,15 @@
 #' This function finds the parameters that describe the input data's growth.
 #' It does so by fitting the logistic curve to your growth curve measurements.
 #' The logistic curve equation is
-#' \deqn{N_t = \frac{N_0 K} {N_0 + (K-N_0)e^{-rt}}} where N_t is the number
+#' \deqn{N_t = \frac{N_0 K} {N_0 + (K-N_0)e^{-rt}}}{N_t = N_0 K / (N_0 + (K - N_0) exp(-rt))}
+#' where \eqn{N_t} is the number
 #' of cells (or the absorbance reading) at time t, \eqn{N_0} is the initial
 #' cell count (or absorbance reading), K is the carrying capacity, and r is the
 #' growth rate.
 #'
 #' The fitness proxies returned are the parameters of the logistic equation
 #' and the area under the curve (a measure that integrates the effects
-#' of N_0, K, and r). See \code{\link{gcfit}} for more documentation on these.
+#' of \eqn{N_0}, K, and r). See \code{\link{gcfit}} for more documentation on these.
 #' @param data_t    A vector of timepoints (data_n must also
 #'                  be provided and be the same length).
 #' @param data_n    A vector of cell counts or absorbance readings.
@@ -106,7 +107,7 @@ SummarizeGrowth <- function(data_t, data_n, t_trim = 0) {
   val_names <- c("k", "k_se", "k_p", "n0", "n0_se", "n0_p",
                  "r", "r_se", "r_p", "sigma", "df",
                  "t_mid", "t_gen", "auc_l", "auc_e")
-  vals <- setNames(as.list(vals), val_names)
+  vals <- stats::setNames(as.list(vals), val_names)
   class(vals) <- "gcvals"
 
   ret <- list("vals" = vals, "model" = log_mod,

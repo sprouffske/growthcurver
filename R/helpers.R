@@ -75,10 +75,10 @@ print.gcfit <- function(x, ...) {
 # @param ...       Additional parameters
 #' @export
 plot.gcfit <- function(x, ...) {
-  old_par <- par(mfrow = c(1,1), mar = c(4,4,1,1))
-  plot(x$data$t, x$data$N, xlab="Time t", ylab="Number N", pch=19, type="b")
-  lines(x$data$t, fitted(x$model), col="red")
-  par(old_par)
+  old_par <- graphics::par(mfrow = c(1,1), mar = c(4,4,1,1))
+  graphics::plot(x$data$t, x$data$N, xlab="Time t", ylab="Number N", pch=19, type="b")
+  graphics::lines(x$data$t, stats::fitted(x$model), col="red")
+  graphics::par(old_par)
 }
 
 #' Creates an object of type gcvals.
@@ -112,7 +112,7 @@ gcvals <- function(k, k_se, k_p, n0, n0_se, n0_p, r, r_se, r_p, sigma, df,
   val.names <- c("k", "k_se", "k_p", "n0", "n0_se", "n0_p",
                  "r", "r_se", "r_p", "sigma", "df",
                  "t_mid", "dt", "auc_l", "auc_e")
-  vals <- setNames(as.list(k, k_se, k_p, n0, n0_se, n0_p, r, r_se, r_p,
+  vals <- stats::setNames(as.list(k, k_se, k_p, n0, n0_se, n0_p, r, r_se, r_p,
                            sigma, df, t_mid, dt,  auc_l, auc_e),
                    val.names)
 }

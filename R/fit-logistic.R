@@ -33,7 +33,8 @@ FitLogistic <- function(data_t, data_n) {
   n0_init <- 0.01  # init population size is near (but never exactly) 0
 
   # make an initial estimate for r
-  glm_mod <- stats::glm(n / k_init ~ t, family = quasibinomial("logit"),
+  glm_mod <- stats::glm(n / k_init ~ t,
+                        family = stats::quasibinomial("logit"),
                         data = d)
   r_init <- glm_mod[[1]][[2]]   # slope
 

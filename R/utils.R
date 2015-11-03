@@ -92,7 +92,7 @@ TAtInflection <- function(k, n0, r) {
 # @return        The area under the curve for logistic equation with the
 #                given parameters, for the specificed time range
 AreaUnderCurve <- function(k, n0, r, t_min = 0, t_max) {
-  auc_l <- integrate(function(x) NAtT(k, n0, r, x), t_min, t_max)
+  auc_l <- stats::integrate(function(x) NAtT(k, n0, r, x), t_min, t_max)
   return(auc_l)
 }
 
