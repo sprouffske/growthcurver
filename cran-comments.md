@@ -6,8 +6,6 @@
 ## R CMD check results
 There were no ERRORs, WARNINGs, or NOTEs.
 
-However, this is the first submission of this package to CRAN!
-
 
 ## Downstream dependencies
 There are no downstream dependencies for this package.

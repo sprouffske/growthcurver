@@ -20,9 +20,9 @@ print.gcvals <- function(x, ...) {
       sep = "\t")
   cat("\n\n")
 
-  cat(names(x[c(13,15:16)]), sep = "\t")
+  cat(names(x[c(13:15)]), sep = "\t")
   cat("\n")
-  cat(mapply(x[c(13,15:16)][], FUN = function(x) {round(x, 3)}), sep = "\t")
+  cat(mapply(x[c(13:15)][], FUN = function(x) {round(x, 3)}), sep = "\t")
   cat("\n\n")
 }
 
@@ -75,9 +75,43 @@ print.gcfit <- function(x, ...) {
 # @param ...       Additional parameters
 #' @export
 plot.gcfit <- function(x, ...) {
+  dots <- list(...)
+
+  if (is.null(dots$xlab)) {
+    dots$xlab <- "Time t"
+  }
+  if (is.null(dots$ylab)) {
+    dots$ylab <- "Number N"
+  }
+  if (is.null(dots$pch)) {
+    dots$pch <- 19
+  }
+
+  args_plot <- dots[setdiff(names(dots), "col")]
+  args_plot$x <- x$data$t
+  args_plot$y <- x$data$N
+  args_plot$type <- "b"
+  args_plot$ylim <- c(0, max(x$data$N))
+    if (!is.null(dots$col)) {
+    args_plot$col <- "black"
+  }
+
+  args_lines <- dots
+  args_lines$x <- max(x$data$t) * (1 : 30) / 30
+  args_lines$y <- NAtT(x$vals$k,
+                       x$vals$n0,
+                       x$vals$r,
+                       args_lines$x)
+  if (is.null(dots$col)) {
+    args_lines$col <- "red"
+  }
+
   old_par <- graphics::par(mfrow = c(1,1), mar = c(4,4,1,1))
-  graphics::plot(x$data$t, x$data$N, xlab="Time t", ylab="Number N", pch=19, type="b")
-  graphics::lines(x$data$t, stats::fitted(x$model), col="red")
+
+  do.call(graphics::plot, args_plot)
+  do.call(graphics::lines, args_lines)
+  #graphics::plot(x$data$t, x$data$N, type="b", )
+  #graphics::lines(x$data$t, stats::fitted(x$model), col="red")
   graphics::par(old_par)
 }
 

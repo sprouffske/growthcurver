@@ -1,7 +1,7 @@
 Package: growthcurver
 Type: Package
 Title: Simple Metrics to Summarize Growth Curves
-Version: 0.1.0
+Version: 0.2.0
 Date: 2015-10-21
 Authors@R: person("Kathleen", "sprouffske", email = "sprouffske@gmail.com", role = c("aut", "cre"))
 Description: This is a simple package that fits the logistic equation to
@@ -17,13 +17,15 @@ Imports:
     caTools (>= 1.17.1),
     minpack.lm (>= 1.1),
     stats (>= 3.2.2),
-    graphics (>= 3.2.2)
+    graphics (>= 3.2.2),
+    grDevices (>= 3.2.2)
 URL: https://github.com/sprouffske/growthcurver
 BugReports: https://github.com/sprouffske/growthcurver/issues
 License: GPL (>= 2)
 Suggests:
     testthat,
     knitr,
-    dplyr
+    dplyr,
+    ggplot2
 VignetteBuilder: knitr
 RoxygenNote: 5.0.0
