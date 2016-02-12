@@ -1,8 +1,8 @@
 # growthcurver
 
-Growthcurver fits growth curve data to a standard form of the logistic equation common in ecology and evolution whose parameters (the growth rate, the initial population size, and the carrying capacity) provide meaningful population-level information with straight-forward biological interpretation. 
+Growthcurver is an R package that fits growth curve data to a standard form of the logistic equation common in ecology and evolution whose parameters (the growth rate, the initial population size, and the carrying capacity) provide meaningful population-level information with straight-forward biological interpretation. 
 
-You can install the latest released version from CRAN with
+You can install the latest released version from CRAN from within R with
   ```R
   install.packages("growthcurver")
   ````

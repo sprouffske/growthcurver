@@ -10,7 +10,7 @@ test_that("SummarizeGrowth returns expected values", {
   N <- 1000
   data_t <- 0:N * 24 / N
   data_n <- growthcurver:::NAtT(k = k_in, n0 = n0_in, r = r_in, t = data_t)
-  gc <- growthcurver::SummarizeGrowth(data_t, data_n)
+  gc <- growthcurver::SummarizeGrowth(data_t, data_n, bg_correct = "none")
   expect_equal(k_in, gc$vals$k)
   expect_equal(n0_in, gc$vals$n0)
   expect_equal(r_in, gc$vals$r)

@@ -4,7 +4,8 @@
 \alias{SummarizeGrowth}
 \title{Summarize Growth Curves}
 \usage{
-SummarizeGrowth(data_t, data_n, t_trim = 0)
+SummarizeGrowth(data_t, data_n, t_trim = 0, bg_correct = "min",
+  blank = NA)
 }
 \arguments{
 \item{data_t}{A vector of timepoints (data_n must also
@@ -16,11 +17,22 @@ be provided and be the same length).}
 in fitting the curve. If stationary phase is variable,
 this may give you a better fit. A value of 0 means no
 trimming. Defaults to no trimming (0).}
+
+\item{bg_correct}{The background correction method to use. No background
+correction is performed for the default "none". Specifying
+"min" subtracts the smallest value in a column from all the
+rows in that column, and specifying "blank" subtracts
+the values from the blank vector from the data_n vector.}
+
+\item{blank}{A vector of absorbance readings from a blank well
+(typically contains only media) used for background
+correction. The corresponding blank value is subtracted
+from the data_n vector for each timepoint. Defaults to NA.}
 }
 \value{
 An object of type gcfit containing the "fitness" proxies,
-                 as well as the input data and the fitted model.
-                 See \code{\link{gcfit}}
+                  as well as the input data and the fitted model.
+                  See \code{\link{gcfit}}
 }
 \description{
 This function finds the parameters that describe the input data's growth.

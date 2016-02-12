@@ -11,7 +11,7 @@ vignette: >
 
 ## Introduction
 
-Growth curves are commonly used in a variety of microbial experiments, including experimental evolution. The data are typically obtained by repeatedly measuring the cell density, or some other representative measure like absorbance. Modern microbial growth curves can be conducted in a plate reader and may result in hundreds of absorbance measurements over the course of 24 hours.
+Growth curves are commonly used in a variety of microbial experiments, including experimental evolution. The data are typically obtained by repeatedly measuring the cell density.  Modern microbial growth curves can be conducted in a plate reader and may result in hundreds of absorbance measurements over the course of 24 hours.
 
 In the `Growthcurver` package, we fit growth curve data to a standard form of the logistic equation common in ecology and evolution whose parameters (the growth rate, the initial population size, and the carrying capacity) provide meaningful population-level information with straight-forward biological interpretation. The logistic equation describes the population size $N_t$ at time $t$ using:
 
@@ -25,13 +25,14 @@ Here, the population size at the beginning of the growth curve is given by $N_0$
 ## Contents
 * Format of the input data
 * A simple first example
-* A sample pipeline for analyzing an entire plate
 * Working with the output metrics
+* A simple method for analyzing an entire plate
+* A sample pipeline for analyzing an entire plate for advanced users
 
 ## Format of the input data
 We have provided simulated sample data in the simplest format for `Growthcurver`. The sample data that we've provided has one column for the time (in hours), and one column for each well in a 96-well plate. Each row contains the OD600 reading for each well at a given time, and the rows are sorted by time. 
 
-Preparing your data in this format will allow you to easily adapt the example simple code and the sample pipeline code (detailed in **A simple first example** and  **How to summarize growth curves for a plate**) to your data.
+Preparing your data in this format will allow you to easily adapt the example simple code and the sample pipeline code (detailed in **A simple first example** and  **How to customize summarizing growth curves for a plate**) to your data. It is also required to use the simple method for analyzing an entire plate (detailed in **How to summarize growth curves for a plate**).
 
 Below, we show the first few rows and columns of the sample data.
 
@@ -54,7 +55,10 @@ file_name <- "the/path/to/my/data/myfilename.txt"
 d <- read.table(file_name, header = TRUE, sep = "\t", stringsAsFactors = FALSE)
 ```
 
-With the exception of the column containing the time data, the names of the columns for `Growthcurver` are unimportant. However, if you plan to adapt the pipeline code in **How to summarize growth curves for a plate**, then the column containing the time must be named `time`, and the remaining columns must have a unique name that will be eventually be identified as the sample name. 
+If you plan to analyze whole plates at a time, then the names of the columns of your input data have some requirements. 
+* The column containing the time must be named `time`.
+* If you are doing background correction using measurements from a blank well, that well must be named `blank` (see the **Background correction** section for more details).
+* The remaining columns must have a unique name that will be eventually be identified as the sample name 
 
 If you don't have a column named `time`, you can create easily create it.
 ```{r, eval = FALSE}
@@ -74,30 +78,20 @@ d$time <- d$time * 60
 d$time <- d$time * 60
 
 # Convert the "time" column from seconds to hours
-d$time <- d$time * 60 * 60
+d$time <- d$time / 60 / 60
 ```
 
 
+### Background correction
 
-You will also need to do a background correction to remove the absorbance signal from the media. There are several approaches for doing the background correction, and I've implemented the simplest in the sample code in the **A simple first example** and **How to summarize growth curves for a plate** sections. The simple method finds the minimum value from each well, and subtracts it from all timepoints (for that well only). This method works if you do not expect your background readings to change over time. Sometimes the background readings may change over time, for example when the media precipitates over time. In this case, you can subtract the average background reading obtained from a set of blank wells at the same timepoint that the measurements were made.
+`Growthcurver` provides two methods for doing a backgtound correction to remove the absorbance signal from the media. The default method (called `min`) finds the minimum value from each well, and subtracts it from all timepoints (for that well only). This method works if you do not expect your background readings to change over time. 
 
-```{r, eval = FALSE}
-# How to do a background correction by averaging several "blank" wells 
-# (for the sake of this example, let's assume that wells B2, D8, and G11 
-# are blanks even though they actually hold growth curve data).  
-# If you want to use this method for background correction, 
-# replace my well names with yours.
+You can also select a second method (called `blank`), which is useful when the background readings change over time. This may happen, for example, when the media precipitates over the course of the growth curve. In this case, you provide the input data in a column called  average background reading obtained from a set of blank wells at the same timepoint that the measurements were made.
 
-# First, get the "blank" values over time by averaging the "blank" columns at
-# each timepoint at which measurements were made.
-d$blank <- apply(d[, c("B2", "D8", "G11")], 1, mean)
-# Next, subtract the blank value from the measurements for a column.
-d$A1 <- d$A1 - d$blank
-```
-If you want to use this advanced background correction approach, replace the background correction code I provide in the examples in the  **A simple first example** and **How to summarize growth curves for a plate** sections with these two lines. Be sure to replace "B2", "D8", and "G11" with the column names of the blanks on your plates. 
+Finally, you can do your own background correction to the data before you call `Growthcurver`. In this case, you specify that you do not need `Growthcurver` to do any background correction for you (called `none`).  I have provided two examples of custom background correction in the example code for  **How to customize summarizing growth curves for a plate (for advanced users)**.
 
 ## A simple first example
-In this example, we will use `Growthcurver` to summarize a single growth curve. 
+In this example, we will use `Growthcurver` to summarize a single growth curve in a single well. 
 
 ```{r, eval = TRUE}
 # First, load the package and the dataset. 
@@ -108,20 +102,9 @@ library(growthcurver)
 # for each well in a 96-well plate.
 d <- growthdata
 
-```
-
-Let's summarize the growth curve data in well A1 using `Growthcurver`. We'll first need to do a background correction to remove the absorbance signal due to media. Then we can run `Growthcurver` and look at the results.
-
-```{r, eval = TRUE, fig.height = 3, fig.width = 3}
-# First, we'll do a background correction by subtracting the minimum
-# value from the well during the growth curve from all the timepoints.
-# You could replace the following two lines with your favorite background 
-# correction method (one is given in the "Format of the input data" section).
-min_value <- min(d$A1)
-d$A1 <- d$A1 - min_value
-
 # Now, we'll use Growthcurver to summarize the growth curve data using the 
-# simple background correction method (minimum value correction). 
+# simple background correction method (minimum value correction). This is the 
+# default method, so we don't need to specify it in the command.
 # This returns an object of type "gcfit" that holds information about
 # the best parameters, the model fit, and additional metrics summarizing
 # the growth curve.
@@ -163,7 +146,30 @@ The most useful values are `k`, `n0`, and `r`, which are the values of the param
 
 ## How to summarize growth curves for a plate
 
-One often measures growth curves in a plate reader for 96 wells at the same time. Following is some sample R code that uses `Growthcurver` to summarize the growth curve data for a whole plate. To adapt this to your data, just ensure that your data are in the same format as the example data (discussed previously in the **Format of the input data** section). Most importantly, this code assumes that the time information is stored in a column named `time`.
+One often measures growth curves in a plate reader for 96 wells at the same time. Following is some sample R code that uses `Growthcurver` to summarize the growth curve data for a whole plate. 
+
+```{R, eval = TRUE} 
+# Load the sample growth curve data provided in the Growthcurver package.
+# The first column is the time in hours, and there is one column 
+# for each well in a 96-well plate.
+d <- growthdata
+
+# Now, we'll use Growthcurver to summarize the growth curve data for the entire
+# plate using the default background correctin method ("min").
+gc_out <- SummarizeGrowthByPlate(d)
+
+# The summary information for each well is listed as a row in the output
+# data frame called gc_out.
+
+# We can look at the first few rows in the output using the head command.
+head(gc_out)
+```
+
+See the section **Working with the output metrics** for more details on interpreting parameters.
+
+## How to customize summarizing growth curves for a plate (for advanced users)
+
+You may want more control over background correction or plotting of the curves. You can use the following code to customize summarizing your growth curves. To adapt this code to your data, just ensure that your data are in the same format as the example data (discussed previously in the **Format of the input data** section). Most importantly, this code assumes that the time information is stored in a column named `time`.
 
 Here, we will first create a data frame in which to store the output data. We will then loop through the columns in the experimental growth curve data, call `SummarizeGrowth` for each, and store the metrics for each column in the output data frame.
 
@@ -216,15 +222,22 @@ for (col_name in names(d)) {
     d_loop <- d[, c("time", col_name)]
     
     # Do the background correction.
-    # You could replace the following two lines with your favorite background 
-    # correction method (one is given in the "Format of the input data" section).
-    min_value <- min(d_loop[, col_name])
+    # Background correction option 1: subtract the minimum value in a column
+    #                                 from all measurements in that column
+        min_value <- min(d_loop[, col_name])
     d_loop[, col_name] <- d_loop[, col_name] - min_value
-
+    # Background correction option 2: subtract the mean value of blank wells
+    #                                 over the course the experiment
+    #                                 (Replace B2, D8, G11 with the column
+    #                                  names of your media-only wells)
+    #d$blank <- apply(d[, c("B2", "D8", "G11")], 1, mean)
+    #d$A1 <- d$A1 - d$blank
+    
     # Now, call Growthcurver to calculate the metrics using SummarizeGrowth
     gc_fit <- SummarizeGrowth(data_t = d_loop[, "time"], 
                               data_n = d_loop[, col_name],
-                              t_trim = trim_at_time)
+                              t_trim = trim_at_time,
+                              bg_correct = "none")
     
     # Now, add the metrics from this column to the next row (n) in the 
     # output data frame, and increment the row counter (n)
@@ -280,25 +293,33 @@ d_gc[1:4, ] %>%
   
 ```
 
-Sometimes `Growthcurver` doesn't find the best fit for your data, especially if the population didn't reach stationary phase during your data collection. To see if this is the case, we strongly recommend plotting all the curves and checking them manually, or looking for outliers that have unusually large `sigma` values. Each sigma value is the residual sum of squares from the fit of the logistic curve to the data. To simplify looking at the sigma values, I use the package `dplyr` for data wrangling and exploration.
+
+## Quality control and usage hints
+
+Sometimes `Growthcurver` doesn't find the best fit for your data. This can happen especially in the following cases:
+* your population didn't reach stationary phase during  data collection,
+* you don't have enough measurements during the initial or final parts of the growth curve (lag phase or stationary phase),
+* you didn't do a background correction, or your background correction method doesn't bring the minimum absorbance reading to near zero.
+
+To see if `Growthcurver` has encountered any of these problems that can lead to a poor fit, we strongly recommend plotting all the curves and checking them manually, or looking for outliers that have unusually large `sigma` values. Each sigma value is the residual sum of squares from the fit of the logistic curve to the data. To simplify looking at the sigma values, I use the package `dplyr` for data wrangling and exploration.
 
 
 ```{R, eval = TRUE, message = FALSE}
-# Load dplyr and the sample data
+# Load dplyr and the sample output data
 library(dplyr)
-d_gc <- as_data_frame(d_gc)
+gc_out <- as_data_frame(gc_out)
 
 # Plot a histogram of the sigma values in order to check for outliers
-hist(d_gc$sigma, main = "Histogram of sigma values", xlab = "sigma")
+hist(gc_out$sigma, main = "Histogram of sigma values", xlab = "sigma")
 
 ```
 ``` {R, eval = FALSE, message = FALSE}
 # Show the top 5 samples with the largest sigma value 
 # (with the worst model fit to the growth curve data)
-d_gc %>% top_n(5, sigma) %>% arrange(desc(sigma))
+gc_out %>% top_n(5, sigma) %>% arrange(desc(sigma))
 ```
 ```{R, eval = TRUE, echo = FALSE, message = FALSE}
-d_gc %>%  
+gc_out %>%  
   mutate(k = round(k, digits = 5),
          n0 = round(n0, digits = 5), 
          r = round(r, digits = 5),
@@ -312,3 +333,27 @@ d_gc %>%
 
 We simulated this dataset, so it is not very noisy. Therefore, it is not surprising that there aren't any extreme `sigma` outliers in this case.
 
+One additional method for identifying outliers is to conduct a principal components analysis on the samples, which projects high dimensional data on lower dimensional space. Plotting the samples on the first two principal components (PC1 and PC2) can identify both natural clusters within the growth curve data and outliers.
+
+```{R, eval = TRUE, message = FALSE}
+# Load dplyr, ggplot2, and the sample data
+library(dplyr)
+library(ggplot2)
+pca_gc_out <- as_data_frame(gc_out) 
+
+# Prepare the gc_out data for the PCA
+rownames(pca_gc_out) <- pca_gc_out$sample
+
+# Do the PCA
+pca.res <- prcomp(pca_gc_out %>% select(k:sigma), center=TRUE, scale=TRUE)
+
+# Plot the results
+as_data_frame(list(PC1=pca.res$x[,1],
+                   PC2=pca.res$x[,2],
+                   samples = rownames(pca.res$x))) %>% 
+  ggplot(aes(x=PC1,y=PC2, label=samples)) + 
+  geom_text()
+```
+
+
+Most of the samples in this plot cluster together, except B8 which should be examined more closely to determine if it had a poor fit.
