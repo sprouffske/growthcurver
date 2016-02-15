@@ -56,7 +56,6 @@ d <- read.table(file_name, header = TRUE, sep = "\t", stringsAsFactors = FALSE)
 ```
 
 If you plan to analyze whole plates at a time, then the names of the columns of your input data must adhere to the following requirements
-
 * The column containing the time must be named `time`  
 * If you are doing background correction using measurements from a blank well, that well must be named `blank` (see the **Background correction** section for more details)
 * The remaining columns must have a unique well name that will be eventually be identified as the sample name
