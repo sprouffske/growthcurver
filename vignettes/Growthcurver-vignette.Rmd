@@ -77,6 +77,7 @@ d$time <- d$time / 60 / 60
 
 ### Background correction
 
+
 `Growthcurver` provides two methods for doing a background correction to remove the absorbance signal due to the media. The default method (called `min`) finds the minimum value from each well, and subtracts it from all timepoints (for that well only). This method works well if you do not expect your background readings to change over time. 
 
 You can also select a second method (called `blank`), which is useful when the background readings change over time. This may happen, for example, when the media precipitates over the course of the growth curve. In this case, you provide the background correction data in a column called `blank`, which contains a series of measurements in a single media-only well measured at the same timepoints that the experimental measurements were made.
@@ -183,7 +184,7 @@ head(gc_out)
 knitr::kable(gc_out[1:5, ])
 ```
 ```{R, eval = FALSE}
-# Or, you can save the entire data table to a tab-separated file that can
+# Or, you can save the entire data table to a tab-separated file that can be
 # imported into Excel.
 output_file_name <- "the/path/to/my/data/myfilename.txt"
 write.table(gc_out, file = output_file_name, 
@@ -322,7 +323,6 @@ d_gc[1:4, ] %>%
 ## Quality control and usage hints
 
 Sometimes `Growthcurver` doesn't find the best fit for your data. This can happen especially in the following cases:
-
 * your population didn't reach stationary phase during  data collection,
 * you don't have enough measurements during the initial or final parts of the growth curve (lag phase or stationary phase),
 * you didn't do a background correction, or your background correction method doesn't bring the minimum absorbance reading to near zero.
