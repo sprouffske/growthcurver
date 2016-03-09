@@ -170,7 +170,9 @@ SummarizeGrowthByPlate <- function(plate,
         graphics::text(x = max(gc_fit$data$t) / 4,
                   y = y_lim_max,
                   labels = col_name, pos = 1)
-        graphics::lines(gc_fit$data$t, predict(gc_fit$model), col = "red")
+        graphics::lines(gc_fit$data$t,
+                        stats::predict(gc_fit$model),
+                        col = "red")
       }
     }
   }

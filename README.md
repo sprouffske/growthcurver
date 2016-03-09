@@ -24,7 +24,7 @@ The easiest way to get started with growthcurver is to work through the examples
 * How to use growthcurver to get summary metrics on an entire plate of growth curves
 * What those metrics mean and some best practices for quality control
 
-You can find the vignette at https://cran.r-project.org/web/packages/growthcurver/vignettes/Growthcurver-vignette.html.
+You can find the vignette at bit.ly/1p7w6dJ. 
 
 ## A simple working example
 
