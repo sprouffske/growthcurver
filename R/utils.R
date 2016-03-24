@@ -70,7 +70,7 @@ TAtInflection <- function(k, n0, r) {
     warning("Initial population size (n0) cannot be 0.")
     return(0)
   }
-  t_inflection <- log((k - n0) / n0) / r
+  t_inflection <- log(abs(k - n0) / n0) / r
   return(t_inflection)
 }
 

@@ -29,24 +29,35 @@ FitLogistic <- function(data_t, data_n) {
   names(d) <- c("t", "n")
 
   # make some guesses for the initial parameter values
-  k_init <- 1.2 * max(data_n)   # carrying capacity is bigger than max
-  n0_init <- min(data_n)  # init population size is near (but never exactly) 0
+  k_init <- max(data_n)   # carrying capacity is near the max
+  n0_init <- min(data_n[data_n > 0])  # init population size is near the min
 
   # make an initial estimate for r
   glm_mod <- stats::glm(n / k_init ~ t,
                         family = stats::quasibinomial("logit"),
                         data = d)
-  r_init <- glm_mod[[1]][[2]]   # slope
+
+  r_init <- coef(glm_mod)[[2]]   # slope
+  if (r_init <= 0) {
+    # the slope should only be positive for a growing culture, so default
+    # to something small
+    r_init <- 0.001
+  }
 
   suppressWarnings(
-    nls_mod <- minpack.lm::nlsLM(n ~ k / (1 + ( (k - n0) / n0) * exp(-r * t)),
-                                 start = list(k = k_init,
-                                              n0 = n0_init,
-                                              r = r_init),
-                                 control = list(maxiter = 500),
-                                 lower = c(0, 0, 0),
-                                 upper = c(Inf, max(data_n), Inf),
-                                 data = d)
+    nls_mod <- tryCatch(
+                 minpack.lm::nlsLM(n ~ k / (1 + ( (k - n0) / n0) * exp(-r * t)),
+                                   start = list(k = k_init,
+                                                n0 = n0_init,
+                                                r = r_init),
+                                   control = list(maxiter = 500),
+                                   lower = c(median(data_n), 0, 0),
+                                   upper = c(Inf, max(data_n), Inf),
+                                   data = d),
+                 error = function(e) {
+                   stop("Error: Growthcurver FitLogistic cannot fit data.")
+                 }
+               )
   )
   return(nls_mod)
 }

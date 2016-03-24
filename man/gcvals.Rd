@@ -5,7 +5,7 @@
 \title{Creates an object of type gcvals.}
 \usage{
 gcvals(k, k_se, k_p, n0, n0_se, n0_p, r, r_se, r_p, sigma, df, t_mid, dt, auc_l,
-  auc_e)
+  auc_e, note)
 }
 \arguments{
 \item{k}{The carrying capacity parameter}
@@ -41,6 +41,9 @@ the unrestrained growth of the population with growth rate r}
 from time 0 to time t}
 
 \item{auc_e}{The area under the curve of the measurements.}
+
+\item{note}{Feedback on common problems with fitting the logistic curve
+to the data}
 }
 \value{
 An object of class gcvals.

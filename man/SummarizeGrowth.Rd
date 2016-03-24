@@ -32,19 +32,19 @@ from the data_n vector for each timepoint. Defaults to NA.}
 \value{
 An object of type gcfit containing the "fitness" proxies,
                   as well as the input data and the fitted model.
-                  See \code{\link{gcfit}}
 }
 \description{
 This function finds the parameters that describe the input data's growth.
 It does so by fitting the logistic curve to your growth curve measurements.
+}
+\details{
 The logistic curve equation is
 \deqn{N_t = \frac{N_0 K} {N_0 + (K-N_0)e^{-rt}}}{N_t = N_0 K / (N_0 + (K - N_0) exp(-rt))}
 where \eqn{N_t} is the number
 of cells (or the absorbance reading) at time t, \eqn{N_0} is the initial
 cell count (or absorbance reading), K is the carrying capacity, and r is the
 growth rate.
-}
-\details{
+
 The fitness proxies returned are the parameters of the logistic equation
 and the area under the curve (a measure that integrates the effects
 of \eqn{N_0}, K, and r). See \code{\link{gcfit}} for more documentation on these.
@@ -79,5 +79,11 @@ gc$vals$t_mid
 # Compare the data with the fit visually by plotting it
 plot(gc)
 
+}
+\seealso{
+See the accompanying Vignette for an example of how to use and interpret
+SummarizeGrowth. \url{bit.ly/1p7w6dJ}.
+
+See also \code{\link{gcfit}}.
 }
 

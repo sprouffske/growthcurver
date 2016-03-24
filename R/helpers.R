@@ -62,12 +62,18 @@ print.gcfit <- function(x, ...) {
   cat("DT", "1 / DT", "auc_l", "auc_e", sep = "\t")
   cat("\n")
   cat("  ")
-  cat(c(round(x$vals$t_gen, 2),
-        format(1 / x$vals$t_gen, scientific = TRUE, digits = 2),
-        round(x$vals$auc_l, 2),
-        round(x$vals$auc_e, 2)), sep = "\t")
+  if (x$vals$note == "") {
+    cat(c(round(x$vals$t_gen, 2),
+          format(1 / x$vals$t_gen, scientific = TRUE, digits = 2),
+          round(x$vals$auc_l, 2),
+          round(x$vals$auc_e, 2)), sep = "\t")
+  }
+  else {
+    cat("0", "0", "0", "0", sep = "\t")
+    cat("\n\n")
+    cat(c("Note: ", x$vals$note), sep = "")
+  }
   cat("\n")
-
 }
 
 # Plots the data and the best fitting curve
@@ -110,8 +116,6 @@ plot.gcfit <- function(x, ...) {
 
   do.call(graphics::plot, args_plot)
   do.call(graphics::lines, args_lines)
-  #graphics::plot(x$data$t, x$data$N, type="b", )
-  #graphics::lines(x$data$t, stats::fitted(x$model), col="red")
   graphics::par(old_par)
 }
 
@@ -139,15 +143,17 @@ plot.gcfit <- function(x, ...) {
 #' @param auc_l     The area under the curve of the fitted logistic equation
 #'                  from time 0 to time t
 #' @param auc_e     The area under the curve of the measurements.
+#' @param note      Feedback on common problems with fitting the logistic curve
+#'                  to the data
 #' @return          An object of class gcvals.
 #' @export
 gcvals <- function(k, k_se, k_p, n0, n0_se, n0_p, r, r_se, r_p, sigma, df,
-                   t_mid, dt, auc_l, auc_e) {
+                   t_mid, dt, auc_l, auc_e, note) {
   val.names <- c("k", "k_se", "k_p", "n0", "n0_se", "n0_p",
                  "r", "r_se", "r_p", "sigma", "df",
-                 "t_mid", "dt", "auc_l", "auc_e")
+                 "t_mid", "dt", "auc_l", "auc_e", "note")
   vals <- stats::setNames(as.list(k, k_se, k_p, n0, n0_se, n0_p, r, r_se, r_p,
-                           sigma, df, t_mid, dt,  auc_l, auc_e),
+                           sigma, df, t_mid, dt,  auc_l, auc_e, note),
                    val.names)
 }
 

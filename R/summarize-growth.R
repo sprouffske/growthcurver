@@ -2,6 +2,7 @@
 #'
 #' This function finds the parameters that describe the input data's growth.
 #' It does so by fitting the logistic curve to your growth curve measurements.
+#'
 #' The logistic curve equation is
 #' \deqn{N_t = \frac{N_0 K} {N_0 + (K-N_0)e^{-rt}}}{N_t = N_0 K / (N_0 + (K - N_0) exp(-rt))}
 #' where \eqn{N_t} is the number
@@ -30,7 +31,11 @@
 #'                   from the data_n vector for each timepoint. Defaults to NA.
 #' @return           An object of type gcfit containing the "fitness" proxies,
 #'                   as well as the input data and the fitted model.
-#'                   See \code{\link{gcfit}}
+#' @seealso
+#' See the accompanying Vignette for an example of how to use and interpret
+#' SummarizeGrowth. \url{bit.ly/1p7w6dJ}.
+#'
+#' See also \code{\link{gcfit}}.
 #' @examples
 #' # We can check that the parameters that are found are the same
 #' # as we use to generate fake experimental data. To do so, let's first
@@ -130,37 +135,64 @@ SummarizeGrowth <- function(data_t, data_n, t_trim = 0,
     data_n <- data_n - min(data_n)
   }
 
-  log_mod <- FitLogistic(data_t, data_n )
+  tryCatch(
+    # code block
+    {log_mod = FitLogistic(data_t, data_n)},
+    # error handling block
+    error = function(e) {}
+    )
 
-  p <- summary(log_mod)$coefficients
-  k <- p[1]
-  k_se <- p[4]
-  k_p <- p[10]
-  n0 <- p[2]
-  n0_se <- p[5]
-  n0_p <- p[11]
-  r <- p[3]
-  r_se <- p[6]
-  r_p <- p[12]
+  # the data did not fit a logistic model
+  if (exists("log_mod") == FALSE) {
+    vals <- c(0, 0, 0, 0, 0, 0,
+              0, 0, 0, 0, 0,
+              0, 0, 0, 0)
+  }
+  else {
+    p <- summary(log_mod)$coefficients
+    k <- p[1]
+    k_se <- p[4]
+    k_p <- p[10]
+    n0 <- p[2]
+    n0_se <- p[5]
+    n0_p <- p[11]
+    r <- p[3]
+    r_se <- p[6]
+    r_p <- p[12]
 
-  # get the inflection point, DT, auc, sigma, df
-  t_inflection <- TAtInflection(k, n0, r)
+    # get the inflection point, DT, auc, sigma, df
+    t_inflection <- TAtInflection(k, n0, r)
 
-  DT <- MaxDt(r)
-  sigma <- summary(log_mod)$sigma
-  df <- summary(log_mod)$df[2]
+    DT <- MaxDt(r)
+    sigma <- summary(log_mod)$sigma
+    df <- summary(log_mod)$df[2]
 
-  auc_l <- AreaUnderCurve(k, n0, r, 0, t_max)$value
-  auc_e <- EmpiricalAreaUnderCurve(data_t, data_n, t_max)
+    auc_l <- AreaUnderCurve(k, n0, r, 0, t_max)$value
+    auc_e <- EmpiricalAreaUnderCurve(data_t, data_n, t_max)
+    vals <- c(k, k_se, k_p, n0, n0_se, n0_p,
+              r, r_se, r_p, sigma, df,
+              t_inflection, DT, auc_l, auc_e)
+  }
 
-  vals <- c(k, k_se, k_p, n0, n0_se, n0_p,
-            r, r_se, r_p, sigma, df,
-            t_inflection, DT, auc_l, auc_e)
   val_names <- c("k", "k_se", "k_p", "n0", "n0_se", "n0_p",
                  "r", "r_se", "r_p", "sigma", "df",
                  "t_mid", "t_gen", "auc_l", "auc_e")
   vals <- stats::setNames(as.list(vals), val_names)
   class(vals) <- "gcvals"
+
+  if (exists("log_mod") == FALSE) {
+    vals$note <- "cannot fit data"
+    log_mod <- ""
+  }
+  else if (k < n0) {
+    vals$note <- "questionable fit (k < n0)"
+  }
+  else if (t_inflection < 0) {
+    vals$note <- "questionable fit"
+  }
+  else {
+    vals$note <- ""
+  }
 
   ret <- list("vals" = vals, "model" = log_mod,
               "data"=list("t" = data_t, "N" = data_n))

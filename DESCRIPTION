@@ -1,8 +1,8 @@
 Package: growthcurver
 Type: Package
 Title: Simple Metrics to Summarize Growth Curves
-Version: 0.2.0
-Date: 2016-03-09
+Version: 0.2.1
+Date: 2016-03-24
 Authors@R: person("Kathleen", "sprouffske", email = "sprouffske@gmail.com", role = c("aut", "cre"))
 Description: This is a simple package that fits the logistic equation to
     microbial growth curve data (e.g., repeated absorbance measurements

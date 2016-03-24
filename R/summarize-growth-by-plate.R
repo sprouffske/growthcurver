@@ -3,6 +3,7 @@
 #' This function finds the parameters that describe the input data's growth
 #' for a plate of growth curves.
 #' It does so by fitting the logistic curve to your growth curve measurements.
+#'
 #' The logistic curve equation is
 #' \deqn{N_t = \frac{N_0 K} {N_0 + (K-N_0)e^{-rt}}}{N_t = N_0 K / (N_0 + (K - N_0) exp(-rt))}
 #' where \eqn{N_t} is the number
@@ -52,20 +53,24 @@
 #'                   error from the fit of the logistic curve to the data.
 #'                   The names of the input columns are used to identify each
 #'                   well (or sample).
+#' @seealso
+#' See the accompanying Vignette for an example of how to use and interpret
+#' SummarizeGrowthByPlate. \url{bit.ly/1p7w6dJ}
+#'
 #' @examples
 #' #Get the summary metrics for the entire plate of sample data provided
-#' #with the GrowthCurver package
+#' #with the Growthcurver package
 #'
-#' #First, load the example data provided with GrowthCurver. Note that there is
-#' #a column named "time" -- this is necessary for GrowthCurver to know which
+#' #First, load the example data provided with Growthcurver. Note that there is
+#' #a column named "time" -- this is necessary for Growthcurver to know which
 #' #column contains the time measurements. In this dataset, the repeated
 #' #measurements from a single well in a plate are given in a column of data.
 #'
-#' plate <- growthdata
-#' names(plate)
+#' myPlate <- growthdata
+#' names(myPlate)
 #'
 #' #Next, do the analysis for all the columns.
-#' summary_plate <- SummarizeGrowthByPlate(plate = plate)
+#' summary_plate <- SummarizeGrowthByPlate(plate = myPlate)
 #'
 #' #The output is a data frame that contains the information on the best
 #' #fit for each column of data.
@@ -118,6 +123,7 @@ SummarizeGrowthByPlate <- function(plate,
                      auc_l = numeric(n),
                      auc_e = numeric(n),
                      sigma = numeric(n),
+                     note = character(n),
                      stringsAsFactors = FALSE)
 
   if (plot_fit == TRUE) {
@@ -157,6 +163,7 @@ SummarizeGrowthByPlate <- function(plate,
       d_gc$auc_l[n] <- gc_fit$vals$auc_l
       d_gc$auc_e[n] <- gc_fit$vals$auc_e
       d_gc$sigma[n] <- gc_fit$vals$sigma
+      d_gc$note[n] <- gc_fit$vals$note
       n <- n + 1
 
       # plot, if necessary
@@ -170,9 +177,11 @@ SummarizeGrowthByPlate <- function(plate,
         graphics::text(x = max(gc_fit$data$t) / 4,
                   y = y_lim_max,
                   labels = col_name, pos = 1)
-        graphics::lines(gc_fit$data$t,
-                        stats::predict(gc_fit$model),
-                        col = "red")
+        if (gc_fit$vals$note == "") {
+          graphics::lines(gc_fit$data$t,
+                          stats::predict(gc_fit$model),
+                          col = "red")
+        }
       }
     }
   }

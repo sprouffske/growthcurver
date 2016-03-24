@@ -1,3 +1,13 @@
+# growthcurver 0.2.1
+
+This is a minor release containing several bug fixes.
+
+* Handled errors raised by `FitLogistic` when the model cannot be fit
+* Added a `note` to the `gc_val` object and the output of 
+  `SummarizeGrowthByPlate` to indicate failed or poor fits
+* Prevented warnings raised by `TAtInflection` when $k < N_0$
+* Updated the vignette to explain the new `note` value
+
 # growthcurver 0.2.0
 
 This is a minor release containing one new function to summarize the growth 

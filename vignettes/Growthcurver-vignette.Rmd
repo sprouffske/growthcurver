@@ -1,15 +1,19 @@
 ---
-title: "Growthcurver: Simple metrics to summarize growth curves"
+title: "Using Growthcurver"
 author: "Kathleen Sprouffske"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+    toc: true
 vignette: >
-  %\VignetteIndexEntry{Growthcurver Vignette}
+  %\VignetteIndexEntry{Using growthcurver}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
 ## Introduction
+
+`Growthcurver` calculates simple metrics to summarize growth curves.
 
 Growth curves are commonly used in a variety of microbial experiments, including experimental evolution. The data are typically obtained by repeatedly measuring the cell density.  Modern microbial growth curves can be conducted in a plate reader and may result in hundreds of absorbance measurements over the course of 24 hours.
 
@@ -22,17 +26,10 @@ $$
 
 Here, the population size at the beginning of the growth curve is given by $N_0$. The maximum possible population size in a particular environment, or the carrying capacity, is given by $K$. The intrinsic growth rate of the population, $r$, is the growth rate that would occur if there were no restrictions imposed on total population size. `Growthcurver` finds the best values of $K$, $r$, and $N_0$ for the growth curve data. 
 
-## Contents
-* Format of the input data
-* A simple first example
-* Working with the output metrics
-* A simple method for analyzing an entire plate
-* A sample pipeline for analyzing an entire plate for advanced users
+## Input data 
+We have provided simulated sample data in the simplest format for `Growthcurver`. The sample data that we've provided has one column for the time (in hours), and one column for each well in a 96-well plate. Each row contains the absorbance reading for each well at a given time, and the rows are sorted by time. 
 
-## Format of the input data
-We have provided simulated sample data in the simplest format for `Growthcurver`. The sample data that we've provided has one column for the time (in hours), and one column for each well in a 96-well plate. Each row contains the OD600 reading for each well at a given time, and the rows are sorted by time. 
-
-Preparing your data in this format will allow you to easily adapt the example simple code and the sample pipeline code (detailed in **A simple first example** and  **How to customize summarizing growth curves for a plate**) to your data. It is also required to use the simple method for analyzing an entire plate (detailed in **How to summarize growth curves for a plate**).
+Preparing your data in this format will allow you to easily adapt our sample simple code, as well as the more complicated pipeline code, to your data.
 
 Below, we show the first few rows and columns of the sample data.
 
@@ -81,7 +78,7 @@ d$time <- d$time / 60 / 60
 
 You can also select a second method (called `blank`), which is useful when the background readings change over time. This may happen, for example, when the media precipitates over the course of the growth curve. In this case, you provide the background correction data in a column called `blank`, which contains a series of measurements in a single media-only well measured at the same timepoints that the experimental measurements were made.
 
-Finally, you can do your own background correction to the data before you call `Growthcurver`. In this case, you specify that you do not need `Growthcurver` to do any background correction for you (called `none`).  I have provided two examples of custom background correction in the example code for  **How to customize summarizing growth curves for a plate (for advanced users)**.
+Finally, you can do your own background correction to the data before you call `Growthcurver`. In this case, you specify that you do not need `Growthcurver` to do any background correction for you (called `none`).  I have provided two examples of custom background correction in the example code for  **Customize growth curves for a plate**.
 
 ## A simple first example
 In this example, we will use `Growthcurver` to summarize a single growth curve in a single well. 
@@ -110,7 +107,7 @@ gc_fit
 plot(gc_fit)
 ```
 
-## Working with the output metrics
+## Output metrics
 
 The object returned from `SummarizeGrowth` contains the metrics, and you can view them easily (as you did above), or you can manipulate them with R commands (as we will do now). 
 
@@ -134,9 +131,13 @@ gc_fit$vals$r
 
 ```
 
-The most useful values are `k`, `n0`, and `r`, which are the values of the parameters for the logistic equation that best fit the data. The fitting algorithm provides a measure of uncertainty for each, which is available (for `n`) in the `n_p` and `n_se` values, for example. The values `sigma` and `df` are both determined during the nonlinear regression fit. `Df` is the degrees of freedom and `sigma` is a measure of the goodnesss of fit of the parameters of the logistic equation for the data; it is the residual sum of squares from the nonlinear regression model. Smaller `sigma` values indicate a better fit of the logistic curve to the data than larger values. `t_mid` is the time at which the population density reaches $\frac{1}{2}K$ (which occurs at the inflection point), `t_gen` is the fastest possible generation time (also called the doubling time), `auc_l` is the area under the logistic curve obtained by taking the integral of the logistic equation, and `auc_e` is the empirical area under the curve which is obtained by summing up the area under the experimental curve from the measurements in the input data.
+The most useful values are `k`, `n0`, and `r`, which are the values of the parameters for the logistic equation that best fit the data. The fitting algorithm provides a measure of uncertainty for each, which is available (for `n`) in the `n_p` and `n_se` values, for example. The values `sigma` and `df` are both determined during the nonlinear regression fit. `Df` is the degrees of freedom and `sigma` is a measure of the goodnesss of fit of the parameters of the logistic equation for the data; it is the residual sum of squares from the nonlinear regression model. Smaller `sigma` values indicate a better fit of the logistic curve to the data than larger values. 
 
-## How to summarize growth curves for a plate
+`t_mid` is the time at which the population density reaches $\frac{1}{2}K$ (which occurs at the inflection point), `t_gen` is the fastest possible generation time (also called the doubling time), `auc_l` is the area under the logistic curve obtained by taking the integral of the logistic equation, and `auc_e` is the empirical area under the curve which is obtained by summing up the area under the experimental curve from the measurements in the input data. If you decide to use `auc_l` or `auc_e`, make sure that you specify the parameter `t_trim` so that these metrics are comparable across samples or plates that were grown for different lengths of time.
+
+The `note` value provides additional information about problems with fitting the logistic curve to your data. No common problems were identified if it is empty.
+
+## Get growth curves for a plate
 
 One often measures growth curves in a plate reader for many wells at the same time. Following is some sample R code that uses `Growthcurver` to summarize the growth curve data for a whole plate. 
 
@@ -190,11 +191,11 @@ write.table(gc_out, file = output_file_name,
             quote = FALSE, sep = "\t", row.names = FALSE)
 ```
 
-See the section **Working with the output metrics** for more details on interpreting parameters.
+See the section **Output metrics** for more details on interpreting parameters.
 
-## How to customize summarizing growth curves for a plate (for advanced users)
+## Customize growth curves for a plate
 
-You may want more control over background correction or plotting of the curves. You can use the following code to customize summarizing your growth curves. To adapt this code to your data, just ensure that your data are in the same format as the example data (discussed previously in the **Format of the input data** section). Most importantly, this code assumes that the time information is stored in a column named `time`.
+Advanced users may want more control over background correction or plotting of the curves. You can use the following code to customize summarizing your growth curves. To adapt this code to your data, just ensure that your data are in the same format as the example data (discussed previously in the **Input data** section). Most importantly, this code assumes that the time information is stored in a column named `time`.
 
 Here, we will first create a data frame in which to store the output data. We will then loop through the columns in the experimental growth curve data, call `SummarizeGrowth` for each, and store the metrics for each column in the output data frame.
 
@@ -240,7 +241,8 @@ y_lim_max <- max(d[,setdiff(names(d), "time")]) - min(d[,setdiff(names(d), "time
 n <- 1    # keeps track of the current row in the output data frame
 for (col_name in names(d)) {
   
-  # Don't process the column called "time". It contains time and not OD600 data.
+  # Don't process the column called "time". 
+  # It contains time and not absorbance data.
   if (col_name != "time") {
 
     # Create a temporary data frame that contains just the time and current col
@@ -294,7 +296,7 @@ for (col_name in names(d)) {
 # dev.off()
 ```
 
-After running the above code, the summary metrics are available for each well (each column in the input data corresponds to a single well). Each column of OD600 data is summarized, and the summary is a row in the output data frame that we created.
+After running the above code, the summary metrics are available for each well (each column in the input data corresponds to a single well). Each column of absorbance data is summarized, and the summary is a row in the output data frame that we created.
 
 ```{R, eval = FALSE}
 # Look at the first few rows (samples) of data in the output data frame. 
@@ -319,14 +321,45 @@ d_gc[1:4, ] %>%
 ```
 
 
-## Quality control and usage hints
+## Quality control and best practices
 
 Sometimes `Growthcurver` doesn't find the best fit for your data. This can happen especially in the following cases:
+
 * your population didn't reach stationary phase during  data collection,
 * you don't have enough measurements during the initial or final parts of the growth curve (lag phase or stationary phase),
-* you didn't do a background correction, or your background correction method doesn't bring the minimum absorbance reading to near zero.
+* you didn't do a background correction, or your background correction method doesn't bring the minimum absorbance reading to near zero,
+* you are trying to run `Growthcurver` on an empty well.
 
-To see if `Growthcurver` has encountered any of these problems that can lead to a poor fit, we strongly recommend plotting all the curves and checking them manually, or looking for outliers that have unusually large `sigma` values. Each sigma value is the residual sum of squares from the fit of the logistic curve to the data. To simplify looking at the sigma values, I use the package `dplyr` for data wrangling and exploration.
+To see if `Growthcurver` has encountered any of these problems that can lead to a poor fit, we recommend doing these three quality control steps after you have run `Growthcurver`. Each step is covered in more detail below.
+
+ * Plot the curves and your data
+ * Check if `Growthcurver` returned any fit notes
+ * Identify outliers
+
+### Plot the curves and your data
+Firstly, we strongly recommend plotting all the curves and checking them manually. See the sections **A simple first example** and **Get growth curves for a plate** for code demonstrating how to easily plot your data and `Growthcurver`'s fit.
+
+### Check for poor fit notes
+
+`Growthcurver` returns a `note` if it finds a potential problem with the fit of the logistic curve to your data. This may happen when it cannot fit the logistic curve to your data, or if it finds evidence of a questionable fit. For example, `Growthcurver` returns a `note` when the carrying capacity $K$ is greater than the initial population size $N_0$, or when the inflection point `t_mid` is found to be negative (both things should not happen in a well-behaved growth curve!)
+
+You can examine the `note` after fitting the growthcurves for an individual sample, or for an entire plate.
+
+```{R, eval = FALSE, message = FALSE}
+# Check if Growthcurver provided any notes in a plate of growthcurves returned 
+# from SummarizeGrowthByPlate
+gc_out %>% filter(note != "") 
+
+# Check if Growthcurver provided any notes in a single growthcurve returned 
+# from SummarizeGrowth
+gc_fit$vals$note
+```
+
+We simulated this dataset, so it doesn't have any data noisy enough to cause problems with `Growthcurver`. Therefore, there are no `notes` returned for these samples.
+
+### Identify outliers 
+
+You should look for outliers that have unusually large `sigma` values. Each `sigma` value is the residual sum of squares from the fit of the logistic curve to the data, so larger values mean poorer fits. To simplify looking at the `sigma` values, I use the package `dplyr` for data wrangling and exploration.
 
 
 ```{R, eval = TRUE, message = FALSE}
@@ -358,7 +391,7 @@ gc_out %>%
 
 We simulated this dataset, so it is not very noisy. Therefore, it is not surprising that there aren't any extreme `sigma` outliers in this case.
 
-One additional method for identifying outliers is to conduct a principal components analysis on the samples, which projects high dimensional data on lower dimensional space. Plotting the samples on the first two principal components (PC1 and PC2) can identify natural clusters within the growth curve data as well as outliers.
+One additional method for identifying outlier parameters is to conduct a principal components analysis on the samples, which projects high dimensional data on lower dimensional space. Plotting the samples on the first two principal components (PC1 and PC2) can identify natural clusters within the growth curve data as well as outliers.
 
 ```{R, eval = TRUE, message = FALSE}
 # Load dplyr, ggplot2, and the sample data
