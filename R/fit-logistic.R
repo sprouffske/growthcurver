@@ -37,7 +37,7 @@ FitLogistic <- function(data_t, data_n) {
                         family = stats::quasibinomial("logit"),
                         data = d)
 
-  r_init <- coef(glm_mod)[[2]]   # slope
+  r_init <- stats::coef(glm_mod)[[2]]   # slope
   if (r_init <= 0) {
     # the slope should only be positive for a growing culture, so default
     # to something small
@@ -51,7 +51,7 @@ FitLogistic <- function(data_t, data_n) {
                                                 n0 = n0_init,
                                                 r = r_init),
                                    control = list(maxiter = 500),
-                                   lower = c(median(data_n), 0, 0),
+                                   lower = c(stats::median(data_n), 0, 0),
                                    upper = c(Inf, max(data_n), Inf),
                                    data = d),
                  error = function(e) {
