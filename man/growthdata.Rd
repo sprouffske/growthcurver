@@ -113,4 +113,3 @@ growing in a plate reader for 1 day. The growth curves for a whole plate are
 included.
 }
 \keyword{datasets}
-

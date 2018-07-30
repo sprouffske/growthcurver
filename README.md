@@ -1,4 +1,5 @@
 # growthcurver
+[![Travis-CI Build Status](https://travis-ci.org/sprouffske/growthcurver.svg?branch=master)](https://travis-ci.org/sprouffske/growthcurver)
 
 Growthcurver is an R package that fits growth curve data to a standard form of the logistic equation common in ecology and evolution whose parameters (the growth rate, the initial population size, and the carrying capacity) provide meaningful population-level information with straight-forward biological interpretation. 
 

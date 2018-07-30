@@ -53,4 +53,3 @@ Constructor function for the "gcvals" class. This object is most often
 obtained when calling  \code{\link{SummarizeGrowth}} (it is the first
 parameter in the \code{\link{gcvals}} object).
 }
-

@@ -22,4 +22,3 @@ The number of cells, or N, at time t
 This function gives the number of cells or absorbance (N) at time t when
 the parameters to the logistic equation are K, N0, and r.
 }
-

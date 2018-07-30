@@ -123,6 +123,10 @@ EmpiricalAreaUnderCurve <- function(data_t, data_n, t_trim = 0) {
     idx_to_keep < rep(TRUE, length(data_t))       # keep all measurements
   }
 
-  auc_e <- caTools::trapz(data_t[idx_to_keep], data_n[idx_to_keep])
+  x <- data_t[idx_to_keep]
+  y <- data_n[idx_to_keep]
+  n <- length(x)
+
+  auc_e <- sum((x[2:n] - x[1:n-1]) * (y[2:n] + y[1:n-1]) /  2)
   return(auc_e)
 }

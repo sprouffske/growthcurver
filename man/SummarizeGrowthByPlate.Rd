@@ -94,4 +94,3 @@ head(summary_plate)      # Use head to display just the first few rows
 See the accompanying Vignette for an example of how to use and interpret
 SummarizeGrowthByPlate. \url{bit.ly/1p7w6dJ}
 }
-

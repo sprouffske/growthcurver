@@ -86,4 +86,3 @@ SummarizeGrowth. \url{bit.ly/1p7w6dJ}.
 
 See also \code{\link{gcfit}}.
 }
-

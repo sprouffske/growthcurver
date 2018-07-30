@@ -30,4 +30,3 @@ This is a constructor function for the "gcfit" class. This class is most
 often obtained as the return value when calling
 \code{\link{SummarizeGrowth}}.
 }
-
