@@ -9,7 +9,7 @@ gcfit(gc_vals, log_mod, data_t, data_n)
 \arguments{
 \item{gc_vals}{An object of class gcvals that contains the summarized
 metrics from fitting the growth model to a set of
-experimental observations. This is where the fitnes proxy
+experimental observations. This is where the fitness proxy
 parameters can be found. See \code{\link{gcvals}} for
 more information the information found in this object.}
 

@@ -164,7 +164,7 @@ gcvals <- function(k, k_se, k_p, n0, n0_se, n0_p, r, r_se, r_p, sigma, df,
 #' \code{\link{SummarizeGrowth}}.
 #' @param gc_vals   An object of class gcvals that contains the summarized
 #'                  metrics from fitting the growth model to a set of
-#'                  experimental observations. This is where the fitnes proxy
+#'                  experimental observations. This is where the fitness proxy
 #'                  parameters can be found. See \code{\link{gcvals}} for
 #'                  more information the information found in this object.
 #' @param log_mod    An object of class nlsModel that contains the results
