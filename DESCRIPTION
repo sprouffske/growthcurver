@@ -12,12 +12,12 @@ Description: This is a simple package that fits the logistic equation to
     curve, and the time to the inflection point.
 LazyData: TRUE
 Depends:
-    R (>= 3.4.3)
+    R (>= 3.4.0)
 Imports:
     minpack.lm (>= 1.1),
-    stats (>= 3.4.3),
-    graphics (>= 3.4.3),
-    grDevices (>= 3.4.3)
+    stats (>= 3.4.0),
+    graphics (>= 3.4.0),
+    grDevices (>= 3.4.0)
 URL: https://github.com/sprouffske/growthcurver
 BugReports: https://github.com/sprouffske/growthcurver/issues
 License: GPL (>= 2)
