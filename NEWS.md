@@ -1,6 +1,6 @@
 # growthcurver 0.3.0
 
-This is a minor release containing several bug fixes.
+This is a minor release containing a bug fix and removing a dependency.
 
 * Fixed bug in `SummarizeGrowthByPlate` that did not properly recognize the `time` and `blank` columns in some instances
 * Updated `EmpiricalAreaUnderCurve` to compute the area under the curve using the trapezoid method, thereby removing the dependency on `trapz` from the orphaned `caTools` package 
