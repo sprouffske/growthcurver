@@ -4,8 +4,24 @@
 \alias{gcvals}
 \title{Creates an object of type gcvals.}
 \usage{
-gcvals(k, k_se, k_p, n0, n0_se, n0_p, r, r_se, r_p, sigma, df, t_mid, dt, auc_l,
-  auc_e, note)
+gcvals(
+  k,
+  k_se,
+  k_p,
+  n0,
+  n0_se,
+  n0_p,
+  r,
+  r_se,
+  r_p,
+  sigma,
+  df,
+  t_mid,
+  dt,
+  auc_l,
+  auc_e,
+  note
+)
 }
 \arguments{
 \item{k}{The carrying capacity parameter}

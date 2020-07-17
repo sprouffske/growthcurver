@@ -4,7 +4,8 @@
 \name{growthdata}
 \alias{growthdata}
 \title{Simulated growth curve data}
-\format{A data frame with 145 observations and 97 variables:
+\format{
+A data frame with 145 observations and 97 variables:
 \describe{
   \item{time}{time, in hours}
   \item{A1}{absorbance readings of well A1}
@@ -103,7 +104,8 @@
   \item{H10}{absorbance readings of well H10}
   \item{H11}{absorbance readings of well H11}
   \item{H12}{absorbance readings of well H12}
-}}
+}
+}
 \usage{
 growthdata
 }

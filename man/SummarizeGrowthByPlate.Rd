@@ -4,8 +4,13 @@
 \alias{SummarizeGrowthByPlate}
 \title{Summarize Growth Curves}
 \usage{
-SummarizeGrowthByPlate(plate, t_trim = 0, bg_correct = "min",
-  plot_fit = FALSE, plot_file = "growthcurver.pdf")
+SummarizeGrowthByPlate(
+  plate,
+  t_trim = 0,
+  bg_correct = "min",
+  plot_fit = FALSE,
+  plot_file = "growthcurver.pdf"
+)
 }
 \arguments{
 \item{plate}{A data.table with at least two columns. One column contains
