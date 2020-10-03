@@ -7,8 +7,10 @@ output:
     toc: true
 vignette: >
   %\VignetteIndexEntry{Using growthcurver}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: inline
 ---
 
 ## Introduction
@@ -408,7 +410,7 @@ pca.res <- prcomp(pca_gc_out %>% select(k:sigma), center=TRUE, scale=TRUE)
 # Plot the results
 as_data_frame(list(PC1=pca.res$x[,1],
                    PC2=pca.res$x[,2],
-                   samples = rownames(pca.res$x))) %>% 
+                   samples = pca_gc_out$sample)) %>% 
   ggplot(aes(x=PC1,y=PC2, label=samples)) + 
   geom_text(size = 3)
 ```
