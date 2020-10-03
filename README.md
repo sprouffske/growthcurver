@@ -25,7 +25,7 @@ The easiest way to get started with growthcurver is to work through the examples
 * How to use growthcurver to get summary metrics on an entire plate of growth curves
 * What those metrics mean and some best practices for quality control
 
-You can find the vignette at bit.ly/1p7w6dJ. 
+You can find the vignette [here](https://cran.r-project.org/web/packages/growthcurver/vignettes/Growthcurver-vignette.html).
 
 ## A simple working example
 
@@ -38,8 +38,6 @@ plot(gc_fit)                             # plot your data and the best fit
 gc_fit                                   # view some returned metrics
 ```
 
- 
-  
+## Using growthcurver
 
-
-
+The paper describing Growthcurver is available [here](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-016-1016-7).

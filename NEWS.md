@@ -1,3 +1,6 @@
+# growthcurver 0.3.1
+This is a minor release to update Growthcurver for `R 4.0`.
+
 # growthcurver 0.3.0
 
 This is a minor release containing a bug fix and removing a dependency.
