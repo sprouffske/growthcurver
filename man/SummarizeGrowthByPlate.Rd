@@ -97,5 +97,5 @@ head(summary_plate)      # Use head to display just the first few rows
 }
 \seealso{
 See the accompanying Vignette for an example of how to use and interpret
-SummarizeGrowthByPlate. \url{bit.ly/1p7w6dJ}
+SummarizeGrowthByPlate. \url{https://CRAN.R-project.org/package=growthcurver/vignettes/Growthcurver-vignette.html}
 }

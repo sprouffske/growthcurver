@@ -81,7 +81,7 @@ plot(gc)
 }
 \seealso{
 See the accompanying Vignette for an example of how to use and interpret
-SummarizeGrowth. \url{bit.ly/1p7w6dJ}.
+SummarizeGrowth. \url{https://CRAN.R-project.org/package=growthcurver/vignettes/Growthcurver-vignette.html}.
 
 See also \code{\link{gcfit}}.
 }

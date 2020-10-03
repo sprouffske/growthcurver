@@ -1,8 +1,8 @@
 Package: growthcurver
 Type: Package
 Title: Simple Metrics to Summarize Growth Curves
-Version: 0.3.0
-Date: 2018-07-30
+Version: 0.3.1
+Date: 2020-10-3
 Authors@R: person("Kathleen", "sprouffske", email = "sprouffske@gmail.com", role = c("aut", "cre"))
 Description: This is a simple package that fits the logistic equation to
     microbial growth curve data (e.g., repeated absorbance measurements
@@ -25,6 +25,7 @@ Suggests:
     testthat,
     knitr,
     dplyr,
-    ggplot2
+    ggplot2,
+    rmarkdown
 VignetteBuilder: knitr
 RoxygenNote: 7.1.1

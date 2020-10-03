@@ -20,12 +20,13 @@ You can install the latest development version from github with
 ## Using growthcurver
 
 The easiest way to get started with growthcurver is to work through the examples in the vignette. In the vignette, you can find information on
+
 * What your input data should look like
 * How to use growthcurver to get summary metrics on a single growth curve sample
 * How to use growthcurver to get summary metrics on an entire plate of growth curves
 * What those metrics mean and some best practices for quality control
 
-You can find the vignette [here](https://cran.r-project.org/web/packages/growthcurver/vignettes/Growthcurver-vignette.html).
+You can find the vignette [here](https://CRAN.R-project.org/package=growthcurver/vignettes/Growthcurver-vignette.html).
 
 ## A simple working example
 

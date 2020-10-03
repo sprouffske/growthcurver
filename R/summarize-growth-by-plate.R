@@ -55,7 +55,7 @@
 #'                   well (or sample).
 #' @seealso
 #' See the accompanying Vignette for an example of how to use and interpret
-#' SummarizeGrowthByPlate. \url{bit.ly/1p7w6dJ}
+#' SummarizeGrowthByPlate. \url{https://CRAN.R-project.org/package=growthcurver/vignettes/Growthcurver-vignette.html}
 #'
 #' @examples
 #' #Get the summary metrics for the entire plate of sample data provided
