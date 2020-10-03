@@ -17,6 +17,8 @@ You can install the latest development version from github with
   devtools::install_github("sprouffske/growthcurver")
   ```
 
+The paper describing Growthcurver is available [here](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-016-1016-7).
+
 ## Using growthcurver
 
 The easiest way to get started with growthcurver is to work through the examples in the vignette. In the vignette, you can find information on
@@ -39,6 +41,4 @@ plot(gc_fit)                             # plot your data and the best fit
 gc_fit                                   # view some returned metrics
 ```
 
-## Using growthcurver
 
-The paper describing Growthcurver is available [here](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-016-1016-7).
