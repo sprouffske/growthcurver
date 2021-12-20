@@ -49,6 +49,10 @@
 #' @param plot_file  The name of the file to save the plots to if you set
 #'                   plot_fit to TRUE. The default file is called
 #'                   "growthcurver.pdf".
+#' @param width_     The number of plate columns. Defaults to 12 for typical
+#'                   96-well plate.
+#' @param height_    The number of plate rows. Defaults to 8 for typical
+#'                   96-well plates.
 #' @return           A data.table containing the summary metrics and residual
 #'                   error from the fit of the logistic curve to the data.
 #'                   The names of the input columns are used to identify each
@@ -81,7 +85,9 @@ SummarizeGrowthByPlate <- function(plate,
                                    t_trim = 0,
                                    bg_correct = "min",
                                    plot_fit = FALSE,
-                                   plot_file = "growthcurver.pdf") {
+                                   plot_file = "growthcurver.pdf",
+                                   width_ = 12,
+                                   height_ = 8) {
 
   # make sure that the input is a data.frame
   if (is.data.frame(plate) != TRUE) {
@@ -127,8 +133,8 @@ SummarizeGrowthByPlate <- function(plate,
                      stringsAsFactors = FALSE)
 
   if (plot_fit == TRUE) {
-    grDevices::cairo_pdf(plot_file, width = 12, height = 8)
-    old_par <- graphics::par(mfcol = c(8, 12), mar = c(0.25, 0.25, 0.25, 0.25))
+    grDevices::cairo_pdf(plot_file, width = width_, height = height_)
+    old_par <- graphics::par(mfcol = c(height_, width_), mar = c(0.25, 0.25, 0.25, 0.25))
     idx_to_plot <- length(plate$time) * 1:20 / 20
     y_lim_max <- max(plate[,setdiff(names(plate), "time")]) -
                  min(plate[,setdiff(names(plate), "time")])
